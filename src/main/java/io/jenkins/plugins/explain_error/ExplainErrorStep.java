@@ -1,8 +1,6 @@
 package io.jenkins.plugins.explain_error;
 
 import hudson.Extension;
-import hudson.FilePath;
-import hudson.Launcher;
 import hudson.model.Run;
 import hudson.model.TaskListener;
 import java.util.Set;
@@ -56,7 +54,7 @@ public class ExplainErrorStep extends Step {
 
         @Override
         public Set<? extends Class<?>> getRequiredContext() {
-            return Set.of(Run.class, TaskListener.class, FilePath.class, Launcher.class);
+            return Set.of(Run.class, TaskListener.class);
         }
 
         @Override
