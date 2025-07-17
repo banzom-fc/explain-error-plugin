@@ -19,7 +19,7 @@ public class ConsoleExplainErrorRunListener extends RunListener<Run<?, ?>> {
             // Add console explain error action to all builds
             if (run.getAction(ConsoleExplainErrorAction.class) == null) {
                 ConsoleExplainErrorAction action = new ConsoleExplainErrorAction(run);
-                run.addAction(action);
+                run.addOrReplaceAction(action);
             }
         } catch (Exception e) {
             LOGGER.severe("Failed to add ConsoleExplainErrorAction to build: " + run.getFullDisplayName() + ". Error: " + e.getMessage());
@@ -32,7 +32,7 @@ public class ConsoleExplainErrorRunListener extends RunListener<Run<?, ?>> {
             // Ensure action is still available after completion
             if (run.getAction(ConsoleExplainErrorAction.class) == null) {
                 ConsoleExplainErrorAction action = new ConsoleExplainErrorAction(run);
-                run.addAction(action);
+                run.addOrReplaceAction(action);
             }
         } catch (Exception e) {
             LOGGER.severe("Failed to add ConsoleExplainErrorAction to completed build: " + run.getFullDisplayName() + ". Error: " + e.getMessage());

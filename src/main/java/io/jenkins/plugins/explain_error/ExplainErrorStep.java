@@ -87,7 +87,7 @@ public class ExplainErrorStep extends Step {
 
             // Add console explain error action to build (if not already present)
             if (run.getAction(ConsoleExplainErrorAction.class) == null) {
-                run.addAction(new ConsoleExplainErrorAction(run));
+                run.addOrReplaceAction(new ConsoleExplainErrorAction(run));
             }
 
             ErrorExplainer explainer = new ErrorExplainer();

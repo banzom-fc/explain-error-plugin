@@ -45,7 +45,7 @@ public class ErrorExplainer {
 
             // Store explanation in build action
             ErrorExplanationAction action = new ErrorExplanationAction(explanation, errorLogs);
-            run.addAction(action);
+            run.addOrReplaceAction(action);
 
             // Explanation is now available on the job page, no need to clutter console output
 
