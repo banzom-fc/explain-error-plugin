@@ -4,6 +4,7 @@ import hudson.Extension;
 import hudson.Plugin;
 import hudson.model.Descriptor;
 import hudson.util.FormValidation;
+import hudson.util.Secret;
 import java.io.IOException;
 import javax.servlet.ServletException;
 import jenkins.model.GlobalConfiguration;
@@ -31,7 +32,7 @@ public class ExplainErrorPlugin extends Plugin {
     @Extension
     public static class GlobalConfigurationImpl extends GlobalConfiguration {
 
-        private String apiKey;
+        private Secret apiKey;
         private String apiUrl = "https://api.openai.com/v1/chat/completions";
         private String model = "gpt-3.5-turbo";
         private boolean enableExplanation = true;
@@ -42,7 +43,7 @@ public class ExplainErrorPlugin extends Plugin {
 
         @DataBoundConstructor
         public GlobalConfigurationImpl(String apiKey, String apiUrl, String model, boolean enableExplanation) {
-            this.apiKey = apiKey;
+            this.apiKey = Secret.fromString(apiKey);
             this.apiUrl = apiUrl;
             this.model = model;
             this.enableExplanation = enableExplanation;
@@ -57,12 +58,12 @@ public class ExplainErrorPlugin extends Plugin {
 
         // Getters and setters
         public String getApiKey() {
-            return apiKey;
+            return Secret.toString(apiKey);
         }
 
         @DataBoundSetter
         public void setApiKey(String apiKey) {
-            this.apiKey = apiKey;
+            this.apiKey = Secret.fromString(apiKey);
         }
 
         public String getApiUrl() {
@@ -108,7 +109,7 @@ public class ExplainErrorPlugin extends Plugin {
                 throws IOException, ServletException {
 
             // Use provided values or fall back to saved values
-            String testApiKey = (apiKey != null && !apiKey.trim().isEmpty()) ? apiKey : this.apiKey;
+            String testApiKey = (apiKey != null && !apiKey.trim().isEmpty()) ? apiKey : Secret.toString(this.apiKey);
             String testApiUrl = (apiUrl != null && !apiUrl.trim().isEmpty()) ? apiUrl : this.apiUrl;
             String testModel = (model != null && !model.trim().isEmpty()) ? model : this.model;
 
