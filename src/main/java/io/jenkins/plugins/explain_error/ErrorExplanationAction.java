@@ -19,7 +19,7 @@ public class ErrorExplanationAction implements Action {
 
     @Override
     public String getIconFileName() {
-        return "document.png";
+        return "symbol-cube";
     }
 
     @Override
