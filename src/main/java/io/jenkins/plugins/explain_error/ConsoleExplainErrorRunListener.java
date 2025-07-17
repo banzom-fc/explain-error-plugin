@@ -20,13 +20,9 @@ public class ConsoleExplainErrorRunListener extends RunListener<Run<?, ?>> {
             if (run.getAction(ConsoleExplainErrorAction.class) == null) {
                 ConsoleExplainErrorAction action = new ConsoleExplainErrorAction(run);
                 run.addAction(action);
-                LOGGER.info("Added ConsoleExplainErrorAction to build: " + run.getFullDisplayName());
-            } else {
-                LOGGER.info("ConsoleExplainErrorAction already exists for build: " + run.getFullDisplayName());
             }
         } catch (Exception e) {
             LOGGER.severe("Failed to add ConsoleExplainErrorAction to build: " + run.getFullDisplayName() + ". Error: " + e.getMessage());
-            e.printStackTrace();
         }
     }
     
@@ -37,11 +33,9 @@ public class ConsoleExplainErrorRunListener extends RunListener<Run<?, ?>> {
             if (run.getAction(ConsoleExplainErrorAction.class) == null) {
                 ConsoleExplainErrorAction action = new ConsoleExplainErrorAction(run);
                 run.addAction(action);
-                LOGGER.info("Added ConsoleExplainErrorAction to completed build: " + run.getFullDisplayName());
             }
         } catch (Exception e) {
             LOGGER.severe("Failed to add ConsoleExplainErrorAction to completed build: " + run.getFullDisplayName() + ". Error: " + e.getMessage());
-            e.printStackTrace();
         }
     }
 }

@@ -192,12 +192,6 @@ src/main/java/io/jenkins/plugins/explain_error/
    - Add logger: `io.jenkins.plugins.explain_error`
    - Set level to `FINE` or `ALL`
 
-2. **In development:**
-   ```java
-   private static final Logger LOGGER = Logger.getLogger(YourClass.class.getName());
-   LOGGER.info("Debug message");
-   ```
-
 ## Pull Request Process
 
 1. **Before submitting:**

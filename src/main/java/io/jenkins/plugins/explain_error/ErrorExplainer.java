@@ -84,16 +84,9 @@ public class ErrorExplainer {
      * Used for console output error explanation.
      */
     public String explainErrorText(String errorText, Run<?, ?> run) {
-        LOGGER.info("Starting error text explanation for build: " + run.getFullDisplayName());
         
         try {
             ExplainErrorPlugin.GlobalConfigurationImpl config = getGlobalConfiguration();
-            
-            LOGGER.info("Global configuration obtained");
-            LOGGER.info("Enable explanation: " + config.isEnableExplanation());
-            LOGGER.info("API URL: " + config.getApiUrl());
-            LOGGER.info("Model: " + config.getModel());
-            LOGGER.info("API Key present: " + !StringUtils.isBlank(config.getApiKey()));
 
             if (!config.isEnableExplanation()) {
                 LOGGER.warning("AI error explanation is disabled in global configuration");
@@ -109,14 +102,11 @@ public class ErrorExplainer {
                 LOGGER.warning("No error text provided");
                 return "No error text provided to explain.";
             }
-
-            LOGGER.info("Calling AI service to explain error");
             
             // Get AI explanation
             AIService aiService = new AIService(config);
             String explanation = aiService.explainError(errorText);
 
-            LOGGER.info("AI service call completed");
             LOGGER.fine("Explanation length: " + (explanation != null ? explanation.length() : 0));
 
             return explanation;

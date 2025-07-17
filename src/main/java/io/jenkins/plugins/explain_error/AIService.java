@@ -32,20 +32,15 @@ public class AIService {
     }
 
     public String explainError(String errorLogs) throws IOException {
-        LOGGER.info("Starting AI service call to explain error");
         
         if (StringUtils.isBlank(errorLogs)) {
-            LOGGER.warning("No error logs provided for explanation");
             return "No error logs provided for explanation.";
         }
 
-        LOGGER.info("Building prompt for AI service");
         String prompt = buildPrompt(errorLogs);
         
-        LOGGER.info("Building request body");
         String requestBody = buildRequestBody(prompt);
         
-        LOGGER.info("Creating HTTP client with timeouts");
         RequestConfig requestConfig = RequestConfig.custom()
                 .setConnectionRequestTimeout(CONNECTION_TIMEOUT)
                 .setConnectTimeout(CONNECTION_TIMEOUT)
@@ -56,18 +51,15 @@ public class AIService {
                 .setDefaultRequestConfig(requestConfig)
                 .build();
 
-        LOGGER.info("Creating HTTP POST request to: " + config.getApiUrl());
         HttpPost post = new HttpPost(config.getApiUrl());
 
         post.setHeader("Content-Type", "application/json");
         post.setHeader("Authorization", "Bearer " + config.getApiKey());
         post.setEntity(new StringEntity(requestBody, "UTF-8"));
 
-        LOGGER.info("Executing HTTP request");
         HttpResponse response = client.execute(post);
         String responseBody = EntityUtils.toString(response.getEntity());
 
-        LOGGER.info("HTTP response received with status: " + response.getStatusLine().getStatusCode());
         LOGGER.fine("Response body length: " + responseBody.length());
         LOGGER.fine("Response body preview: " + responseBody.substring(0, Math.min(500, responseBody.length())));
 
@@ -78,10 +70,8 @@ public class AIService {
                     + response.getStatusLine().getStatusCode() + ". Please check your API configuration and key.";
         }
 
-        LOGGER.info("Parsing AI response");
         String explanation = parseResponse(responseBody);
         
-        LOGGER.info("AI service call completed successfully");
         return explanation;
     }
 

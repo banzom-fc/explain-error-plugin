@@ -45,21 +45,12 @@ public class ConsoleExplainErrorAction implements Action {
      * Called via JavaScript from the console output page.
      */
     @RequirePOST
-    public void doExplainConsoleError(StaplerRequest req, StaplerResponse rsp) throws ServletException, IOException {
-        LOGGER.info("=== EXPLAIN ERROR REQUEST STARTED ===");
-        LOGGER.info("Build: " + run.getFullDisplayName());
-        LOGGER.info("Request URL: " + req.getRequestURL());
-        LOGGER.info("Request URI: " + req.getRequestURI());
-        LOGGER.info("Method: " + req.getMethod());
-        
+    public void doExplainConsoleError(StaplerRequest req, StaplerResponse rsp) throws ServletException, IOException {        
         try {
             // Check if user has permission to view this build
-            LOGGER.info("Checking permissions...");
             run.checkPermission(hudson.model.Item.READ);
-            LOGGER.info("Permission check passed");
 
             String errorText = req.getParameter("errorText");
-            LOGGER.info("Error text parameter received: " + (errorText != null ? "YES (length: " + errorText.length() + ")" : "NO"));
             
             if (errorText == null || errorText.trim().isEmpty()) {
                 LOGGER.warning("No error text provided in request");
@@ -67,32 +58,21 @@ public class ConsoleExplainErrorAction implements Action {
                 return;
             }
 
-            LOGGER.info("Error text preview: " + errorText.substring(0, Math.min(200, errorText.length())));
-
             // Use the existing ErrorExplainer service
-            LOGGER.info("Creating ErrorExplainer instance...");
             ErrorExplainer explainer = new ErrorExplainer();
             
-            LOGGER.info("Calling explainErrorText...");
             String explanation = explainer.explainErrorText(errorText, run);
-            
-            LOGGER.info("Explanation received: " + (explanation != null ? "YES (length: " + explanation.length() + ")" : "NO"));
-            
+                        
             if (explanation != null && !explanation.trim().isEmpty()) {
-                LOGGER.info("Sending successful response");
                 writeJsonResponse(rsp, explanation);
             } else {
-                LOGGER.warning("Empty explanation received from AI service");
                 writeJsonResponse(
                         rsp, "Error: Could not generate explanation. Please check your OpenAI API configuration.");
             }
             
-            LOGGER.info("=== EXPLAIN ERROR REQUEST COMPLETED ===");
-
         } catch (Exception e) {
             LOGGER.severe("=== EXPLAIN ERROR REQUEST FAILED ===");
             LOGGER.severe("Error explaining console error: " + e.getMessage());
-            e.printStackTrace();
             writeJsonResponse(rsp, "Error: " + e.getMessage());
         }
     }
@@ -101,7 +81,6 @@ public class ConsoleExplainErrorAction implements Action {
      * Test endpoint to verify the action is properly registered.
      */
     public void doTestEndpoint(StaplerRequest req, StaplerResponse rsp) throws ServletException, IOException {
-        LOGGER.info("=== TEST ENDPOINT CALLED ===");
         writeJsonResponse(rsp, "Test endpoint is working! Action is properly registered.");
     }
 
@@ -110,7 +89,6 @@ public class ConsoleExplainErrorAction implements Action {
      * Using GET to avoid CSRF issues.
      */
     public void doDiagnostic(StaplerRequest req, StaplerResponse rsp) throws ServletException, IOException {
-        LOGGER.info("=== DIAGNOSTIC ENDPOINT CALLED ===");
         
         try {
             // Check permissions
@@ -129,13 +107,11 @@ public class ConsoleExplainErrorAction implements Action {
             diagnostic.append("- API Key configured: ").append(config.getApiKey() != null && !config.getApiKey().trim().isEmpty()).append("\n");
             diagnostic.append("- ErrorExplainer class available: ").append(ErrorExplainer.class.getName()).append("\n");
             diagnostic.append("- AIService class available: ").append(AIService.class.getName()).append("\n");
-            
-            LOGGER.info("Diagnostic completed successfully");
+
             writeJsonResponse(rsp, diagnostic.toString());
             
         } catch (Exception e) {
             LOGGER.severe("Diagnostic failed: " + e.getMessage());
-            e.printStackTrace();
             writeJsonResponse(rsp, "Diagnostic failed: " + e.getMessage());
         }
     }
