@@ -12,14 +12,15 @@ import org.jenkinsci.plugins.workflow.steps.StepDescriptor;
 import org.jenkinsci.plugins.workflow.steps.StepExecution;
 import org.jenkinsci.plugins.workflow.steps.SynchronousNonBlockingStepExecution;
 import org.kohsuke.stapler.DataBoundConstructor;
+import org.kohsuke.stapler.DataBoundSetter;
 
 /**
  * Pipeline step to explain errors using AI.
  */
 public class ExplainErrorStep extends Step {
 
-    private final String logPattern;
-    private final int maxLines;
+    private String logPattern;
+    private int maxLines;
 
     @DataBoundConstructor
     public ExplainErrorStep() {
@@ -27,17 +28,22 @@ public class ExplainErrorStep extends Step {
         this.maxLines = 100;
     }
 
-    public ExplainErrorStep(String logPattern, int maxLines) {
-        this.logPattern = logPattern != null ? logPattern : "";
-        this.maxLines = maxLines > 0 ? maxLines : 100;
-    }
-
     public String getLogPattern() {
         return logPattern;
     }
 
+    @DataBoundSetter
+    public void setLogPattern(String logPattern) {
+        this.logPattern = logPattern != null ? logPattern : "";
+    }
+
     public int getMaxLines() {
         return maxLines;
+    }
+
+    @DataBoundSetter
+    public void setMaxLines(int maxLines) {
+        this.maxLines = maxLines > 0 ? maxLines : 100;
     }
 
     @Override

@@ -16,6 +16,7 @@ The Explain Error Plugin transforms cryptic build error logs into clear, actiona
 - [Quick Start](#quick-start)
 - [Usage](#usage)
   - [Pipeline Step](#method-1-pipeline-step)
+  - [Advanced Configuration](#advanced-configuration)
   - [Manual Console Analysis](#method-2-manual-console-analysis)
 - [Troubleshooting](#troubleshooting)
 - [Best Practices](#best-practices)
@@ -104,6 +105,31 @@ pipeline {
 - ✅ Works with all pipeline types
 
 And see output from side panel if the job failed.
+
+## Advanced Configuration
+
+### Limit Log Lines
+
+To optimize API usage and costs, you can limit the number of log lines analyzed by the `explainError` step. This is particularly useful for large logs where analyzing every line may not be necessary.
+
+```groovy
+explainError(maxLines: 500)
+```
+
+### Log Filtering Patterns
+
+Use regex patterns to focus analysis on specific errors:
+
+```groovy
+// Focus on compilation errors
+explainError(logPattern: '(?i)(error|exception|failed|compilation)')
+
+// Focus on test failures
+explainError(logPattern: '(?i)(test.*failed|assertion.*error)')
+
+// Focus on deployment issues
+explainError(logPattern: '(?i)(deploy|connection|timeout|refused)')
+```
 
 ![AI Error Explanation 1](docs/images/side-panel.png)
 
