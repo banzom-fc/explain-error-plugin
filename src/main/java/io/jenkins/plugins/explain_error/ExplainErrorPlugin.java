@@ -8,6 +8,7 @@ import hudson.util.Secret;
 import java.io.IOException;
 import javax.servlet.ServletException;
 import jenkins.model.GlobalConfiguration;
+import jenkins.model.Jenkins;
 import net.sf.json.JSONObject;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.DataBoundSetter;
@@ -107,6 +108,8 @@ public class ExplainErrorPlugin extends Plugin {
                 @QueryParameter("apiUrl") String apiUrl,
                 @QueryParameter("model") String model)
                 throws IOException, ServletException {
+
+            Jenkins.get().checkPermission(Jenkins.ADMINISTER);
 
             // Use provided values or fall back to saved values
             String testApiKey = (apiKey != null && !apiKey.trim().isEmpty()) ? apiKey : Secret.toString(this.apiKey);
