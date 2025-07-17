@@ -1,0 +1,130 @@
+package io.jenkins.plugins.explain_error;
+
+import hudson.model.Run;
+import hudson.model.TaskListener;
+import java.io.IOException;
+import java.util.List;
+import java.util.logging.Logger;
+import java.util.regex.Pattern;
+import jenkins.model.Jenkins;
+import org.apache.commons.lang.StringUtils;
+
+/**
+ * Service class responsible for explaining errors using AI.
+ */
+public class ErrorExplainer {
+
+    private static final Logger LOGGER = Logger.getLogger(ErrorExplainer.class.getName());
+
+    public void explainError(Run<?, ?> run, TaskListener listener, String logPattern, int maxLines) {
+        try {
+            ExplainErrorPlugin.GlobalConfigurationImpl config = getGlobalConfiguration();
+
+            if (!config.isEnableExplanation()) {
+                listener.getLogger().println("AI error explanation is disabled in global configuration.");
+                return;
+            }
+
+            if (StringUtils.isBlank(config.getApiKey())) {
+                listener.getLogger()
+                        .println("ERROR: API key is not configured. Please configure it in Jenkins global settings.");
+                return;
+            }
+
+            // Extract error logs
+            String errorLogs = extractErrorLogs(run, logPattern, maxLines);
+
+            if (StringUtils.isBlank(errorLogs)) {
+                listener.getLogger().println("No error logs found to explain.");
+                return;
+            }
+
+            // Get AI explanation
+            AIService aiService = new AIService(config);
+            String explanation = aiService.explainError(errorLogs);
+
+            // Store explanation in build action
+            ErrorExplanationAction action = new ErrorExplanationAction(explanation, errorLogs);
+            run.addAction(action);
+
+            // Explanation is now available on the job page, no need to clutter console output
+
+        } catch (Exception e) {
+            LOGGER.severe("Failed to explain error: " + e.getMessage());
+            listener.getLogger().println("Failed to explain error: " + e.getMessage());
+        }
+    }
+
+    private String extractErrorLogs(Run<?, ?> run, String logPattern, int maxLines) throws IOException {
+        List<String> logLines = run.getLog(maxLines);
+
+        if (StringUtils.isBlank(logPattern)) {
+            // Return last few lines if no pattern specified
+            return String.join("\n", logLines);
+        }
+
+        Pattern pattern = Pattern.compile(logPattern, Pattern.CASE_INSENSITIVE);
+        StringBuilder errorLogs = new StringBuilder();
+
+        for (String line : logLines) {
+            if (pattern.matcher(line).find()) {
+                errorLogs.append(line).append("\n");
+            }
+        }
+
+        return errorLogs.toString();
+    }
+
+    private ExplainErrorPlugin.GlobalConfigurationImpl getGlobalConfiguration() {
+        return Jenkins.get().getDescriptorByType(ExplainErrorPlugin.GlobalConfigurationImpl.class);
+    }
+
+    /**
+     * Explains error text directly without extracting from logs.
+     * Used for console output error explanation.
+     */
+    public String explainErrorText(String errorText, Run<?, ?> run) {
+        LOGGER.info("Starting error text explanation for build: " + run.getFullDisplayName());
+        
+        try {
+            ExplainErrorPlugin.GlobalConfigurationImpl config = getGlobalConfiguration();
+            
+            LOGGER.info("Global configuration obtained");
+            LOGGER.info("Enable explanation: " + config.isEnableExplanation());
+            LOGGER.info("API URL: " + config.getApiUrl());
+            LOGGER.info("Model: " + config.getModel());
+            LOGGER.info("API Key present: " + !StringUtils.isBlank(config.getApiKey()));
+
+            if (!config.isEnableExplanation()) {
+                LOGGER.warning("AI error explanation is disabled in global configuration");
+                return "AI error explanation is disabled in global configuration.";
+            }
+
+            if (StringUtils.isBlank(config.getApiKey())) {
+                LOGGER.warning("API key is not configured");
+                return "ERROR: API key is not configured. Please configure it in Jenkins global settings.";
+            }
+
+            if (StringUtils.isBlank(errorText)) {
+                LOGGER.warning("No error text provided");
+                return "No error text provided to explain.";
+            }
+
+            LOGGER.info("Calling AI service to explain error");
+            
+            // Get AI explanation
+            AIService aiService = new AIService(config);
+            String explanation = aiService.explainError(errorText);
+
+            LOGGER.info("AI service call completed");
+            LOGGER.fine("Explanation length: " + (explanation != null ? explanation.length() : 0));
+
+            return explanation;
+
+        } catch (Exception e) {
+            LOGGER.severe("Failed to explain error text: " + e.getMessage());
+            e.printStackTrace();
+            return "Failed to explain error: " + e.getMessage();
+        }
+    }
+}

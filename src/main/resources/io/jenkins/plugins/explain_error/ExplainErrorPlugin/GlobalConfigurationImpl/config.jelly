@@ -1,0 +1,31 @@
+<?jelly escape-by-default='true'?>
+<j:jelly xmlns:j="jelly:core" xmlns:f="/lib/form">
+    <f:section title="Explain Error Plugin Configuration">
+        <f:entry title="Enable AI Error Explanation" field="enableExplanation">
+            <f:checkbox />
+        </f:entry>
+        
+        <f:entry title="API Key" field="apiKey">
+            <f:password />
+        </f:entry>
+        
+        <f:entry title="API URL" field="apiUrl">
+            <f:textbox default="https://api.openai.com/v1/chat/completions" />
+        </f:entry>
+        
+        <f:entry title="AI Model" field="model">
+            <f:textbox default="gpt-3.5-turbo" />
+        </f:entry>
+        
+        <f:entry title="">
+            <div>
+                <f:validateButton title="Test Configuration" progress="Testing..." 
+                                method="testConfiguration" with="apiKey,apiUrl,model" />
+            </div>
+            <div style="margin-top: 10px; font-size: 12px; color: #666;">
+                <strong>Test Configuration:</strong> This will make a test API call to validate your OpenAI configuration.
+                <br/>Make sure to save your configuration first, or enter the values above before testing.
+            </div>
+        </f:entry>
+    </f:section>
+</j:jelly>

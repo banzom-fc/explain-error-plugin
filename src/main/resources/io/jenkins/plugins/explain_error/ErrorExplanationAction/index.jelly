@@ -1,0 +1,22 @@
+<?jelly escape-by-default='true'?>
+<j:jelly xmlns:j="jelly:core" xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form">
+    <l:layout title="AI Error Explanation">
+        <l:main-panel>
+            <h1>AI Error Explanation</h1>
+            
+            <div style="margin-bottom: 20px;">
+                <strong>Generated on:</strong> ${it.formattedTimestamp}
+            </div>
+            
+            <div style="background-color: #f8f9fa; padding: 15px; border-radius: 5px; margin-bottom: 20px;">
+                <h3>AI Error Explanation</h3>
+                <pre style="white-space: pre-wrap; word-wrap: break-word;">${it.explanation}</pre>
+            </div>
+            
+            <div style="background-color: #fff3cd; padding: 15px; border-radius: 5px;">
+                <h3>Original Error Logs</h3>
+                <pre style="white-space: pre-wrap; word-wrap: break-word; max-height: 400px; overflow-y: auto;">${it.originalErrorLogs}</pre>
+            </div>
+        </l:main-panel>
+    </l:layout>
+</j:jelly>
