@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.logging.Logger;
 import java.util.regex.Pattern;
 import jenkins.model.Jenkins;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * Service class responsible for explaining errors using AI.

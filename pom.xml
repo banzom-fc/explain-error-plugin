@@ -96,6 +96,12 @@
       <artifactId>workflow-step-api</artifactId>
     </dependency>
 
+    <!-- Commons Lang3 API -->
+    <dependency>
+      <groupId>io.jenkins.plugins</groupId>
+      <artifactId>commons-lang3-api</artifactId>
+    </dependency>
+
     <!-- Needed only for testing -->
     <dependency>
       <groupId>org.jenkins-ci.plugins.workflow</groupId>
