@@ -5,7 +5,6 @@ import hudson.FilePath;
 import hudson.Launcher;
 import hudson.model.Run;
 import hudson.model.TaskListener;
-import hudson.util.FormValidation;
 import java.util.Set;
 import org.jenkinsci.plugins.workflow.steps.Step;
 import org.jenkinsci.plugins.workflow.steps.StepContext;
@@ -13,7 +12,6 @@ import org.jenkinsci.plugins.workflow.steps.StepDescriptor;
 import org.jenkinsci.plugins.workflow.steps.StepExecution;
 import org.jenkinsci.plugins.workflow.steps.SynchronousNonBlockingStepExecution;
 import org.kohsuke.stapler.DataBoundConstructor;
-import org.kohsuke.stapler.QueryParameter;
 
 /**
  * Pipeline step to explain errors using AI.
@@ -63,16 +61,6 @@ public class ExplainErrorStep extends Step {
         @Override
         public String getDisplayName() {
             return "Explain Error with AI";
-        }
-
-        public FormValidation doCheckMaxLines(@QueryParameter int value) {
-            if (value <= 0) {
-                return FormValidation.error("Max lines must be greater than 0");
-            }
-            if (value > 1000) {
-                return FormValidation.warning("Large number of lines may result in high API costs");
-            }
-            return FormValidation.ok();
         }
     }
 
