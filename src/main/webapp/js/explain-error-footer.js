@@ -27,6 +27,13 @@ function injectStyles() {
       border: 1px solid #ccc;
       border-radius: 4px;
     }
+    .explain-error-btn {
+      margin-right: 10px !important;
+    }
+    .jenkins-button.explain-error-btn {
+      display: inline-block;
+      margin-right: 10px;
+    }
     .explain-error-result {
       margin-top: 10px;
       padding: 10px;
@@ -58,41 +65,84 @@ function injectStyles() {
 }
 
 function addExplainErrorButton() {
+  // First try to find the existing console button bar
+  const consoleButtonBar = 
+    document.querySelector('.console-actions') ||
+    document.querySelector('.console-output-actions') ||
+    document.querySelector('.console-controls') ||
+    document.querySelector('[class*="console"][class*="button"]') ||
+    document.querySelector('#console .btn-group') ||
+    document.querySelector('.jenkins-button-bar');
+
+  // Try to find buttons by their text content
+  let buttonContainer = null;
+  const downloadButtons = Array.from(document.querySelectorAll('a, button')).filter(el => 
+    el.textContent && (
+      el.textContent.includes('Download') || 
+      el.textContent.includes('Copy') || 
+      el.textContent.includes('View as plain text')
+    )
+  );
+
+  if (downloadButtons.length > 0) {
+    buttonContainer = downloadButtons[0].parentElement;
+  }
+
+  // Fallback: find console output element
   const consoleOutput =
     document.querySelector('#out') ||
     document.querySelector('pre.console-output') ||
     document.querySelector('pre');
 
-  if (!consoleOutput) {
+  if (!consoleOutput && !buttonContainer) {
     console.warn('Console output element not found');
     setTimeout(addExplainErrorButton, 3000);
     return;
   }
 
-  if (document.querySelector('.explain-error-container')) {
-    console.log('Button container already exists, skipping');
+  if (document.querySelector('.explain-error-btn')) {
+    console.log('Explain Error button already exists, skipping');
     return;
   }
 
-  const container = document.createElement('div');
-  container.className = 'explain-error-container';
+  const explainBtn = createButton('Explain Error', 'jenkins-button explain-error-btn', explainConsoleError);
 
-  const explainBtn = createButton('Explain Error', 'btn btn-primary', explainConsoleError);
+  // If we found the button container, add our button there
+  if (buttonContainer) {
+    console.log('Adding button to existing button container');
+    buttonContainer.insertBefore(explainBtn, buttonContainer.firstChild);
+  } else if (consoleButtonBar) {
+    console.log('Adding button to console button bar');
+    consoleButtonBar.appendChild(explainBtn);
+  } else {
+    // Fallback: create a simple container above console output
+    console.log('Creating new button container above console');
+    const container = document.createElement('div');
+    container.className = 'explain-error-container';
+    container.style.marginBottom = '10px';
+    container.appendChild(explainBtn);
+    consoleOutput.parentNode.insertBefore(container, consoleOutput);
+  }
 
+  // Create result container (always separate from buttons)
   const result = document.createElement('div');
   result.id = 'explain-error-result';
   result.className = 'explain-error-result';
   result.style.display = 'none';
-
-  container.append(explainBtn, result);
-  consoleOutput.parentNode.insertBefore(container, consoleOutput);
+  
+  // Insert result container after console output or after button container
+  const insertAfter = consoleOutput || buttonContainer;
+  if (insertAfter && insertAfter.parentNode) {
+    insertAfter.parentNode.insertBefore(result, insertAfter.nextSibling);
+  } else {
+    document.body.appendChild(result);
+  }
 }
 
 function createButton(text, className, onClick) {
   const btn = document.createElement('button');
   btn.textContent = text;
   btn.className = className;
-  btn.style.marginRight = '10px';
   btn.onclick = onClick;
   return btn;
 }
