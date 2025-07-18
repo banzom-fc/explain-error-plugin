@@ -78,15 +78,13 @@ function addExplainErrorButton() {
   container.className = 'explain-error-container';
 
   const explainBtn = createButton('Explain Error', 'btn btn-primary', explainConsoleError);
-  const testBtn = createButton('Test Endpoint', 'btn btn-secondary', testEndpoint);
-  const diagBtn = createButton('Diagnostic', 'btn btn-info', runDiagnostic);
 
   const result = document.createElement('div');
   result.id = 'explain-error-result';
   result.className = 'explain-error-result';
   result.style.display = 'none';
 
-  container.append(explainBtn, testBtn, diagBtn, result);
+  container.append(explainBtn, result);
   consoleOutput.parentNode.insertBefore(container, consoleOutput);
 }
 
@@ -164,44 +162,6 @@ function sendExplainRequest(text, crumb, result) {
     result.innerHTML = '<div style="color:red;"><strong>Timeout</strong>: Request took too long</div>';
   };
   xhr.send('errorText=' + encodeURIComponent(text));
-}
-
-function testEndpoint() {
-  const result = document.getElementById('explain-error-result');
-  result.style.display = 'block';
-  result.textContent = 'Testing endpoint...';
-
-  const basePath = window.location.pathname.replace(/\/console$/, '');
-  const url = basePath + '/console-explain-error/testEndpoint';
-
-  const xhr = new XMLHttpRequest();
-  xhr.open('GET', url, true);
-  xhr.onload = function () {
-    result.innerHTML =
-      xhr.status === 200
-        ? `<div style="color:green;">✅ Test Success!</div><div>${xhr.responseText}</div>`
-        : `<div style="color:red;">❌ Test Failed! Status: ${xhr.status}</div><div>${xhr.responseText}</div>`;
-  };
-  xhr.send();
-}
-
-function runDiagnostic() {
-  const result = document.getElementById('explain-error-result');
-  result.style.display = 'block';
-  result.textContent = 'Running diagnostic...';
-
-  const basePath = window.location.pathname.replace(/\/console$/, '');
-  const url = basePath + '/console-explain-error/diagnostic';
-
-  const xhr = new XMLHttpRequest();
-  xhr.open('GET', url, true);
-  xhr.onload = function () {
-    result.innerHTML =
-      xhr.status === 200
-        ? `<div style="color:green;">✅ Diagnostic Complete</div><pre>${xhr.responseText}</pre>`
-        : `<div style="color:red;">❌ Diagnostic Failed! Status: ${xhr.status}</div><div>${xhr.responseText}</div>`;
-  };
-  xhr.send();
 }
 
 function fetchCrumbToken() {
