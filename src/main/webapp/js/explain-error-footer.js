@@ -229,72 +229,50 @@ function explainConsoleError() {
       Jenkins Root: ${getRootURL()}<br/>
       Request will be sent to: <span id="debug-url"></span><br/>
       Console text length: ${text.length} characters<br/>
-      <span id="debug-status">Fetching CSRF token...</span>
+      <span id="debug-status">Sending request...</span>
     </div>
   `;
 
-  fetchCrumbToken().then(crumb => {
-    document.getElementById('debug-status').textContent = 'CSRF token obtained, sending request...';
-    sendExplainRequest(text, crumb, result);
-  }).catch(err => {
-    document.getElementById('debug-status').textContent = 'Failed to get CSRF token, using fallback';
-    sendExplainRequest(text, null, result);
-  });
+  sendExplainRequest(text, result);
 }
 
-function sendExplainRequest(text, crumb, result) {
+function sendExplainRequest(text, result) {
   const basePath = window.location.pathname.replace(/\/console$/, '');
   const url = basePath + '/console-explain-error/explainConsoleError';
   document.getElementById('debug-url').textContent = url;
 
-  const xhr = new XMLHttpRequest();
-  xhr.open('POST', url, true);
-  xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-  if (crumb) xhr.setRequestHeader(crumb.headerName, crumb.value);
+  // Use Jenkins' global crumb object if available, otherwise create empty headers
+  const headers = {
+    "Content-Type": "application/x-www-form-urlencoded"
+  };
+  
+  // Jenkins provides a global crumb object
+  if (typeof crumb !== 'undefined' && crumb.wrap) {
+    Object.assign(headers, crumb.wrap({}));
+  }
 
-  xhr.timeout = 120000;
-  xhr.onload = function () {
-    if (xhr.status === 200) {
-      try {
-        const response = JSON.parse(xhr.responseText);
-        result.innerHTML = '<div style="white-space: pre-wrap;">' + response + '</div>';
-      } catch (e) {
-        result.innerHTML = `<div style="color:red;"><strong>JSON Error:</strong> ${e.message}</div>`;
-      }
-    } else {
-      result.innerHTML = `<div style="color:red;"><strong>Error:</strong> ${xhr.status}</div><div>${xhr.responseText}</div>`;
+  fetch(url, {
+    method: "POST",
+    headers: headers,
+    body: 'errorText=' + encodeURIComponent(text)
+  })
+  .then(response => {
+    if (!response.ok) {
+      throw new Error(`HTTP ${response.status}: ${response.statusText}`);
     }
-  };
-  xhr.onerror = function () {
-    result.innerHTML = '<div style="color:red;"><strong>Network Error</strong></div>';
-  };
-  xhr.ontimeout = function () {
-    result.innerHTML = '<div style="color:red;"><strong>Timeout</strong>: Request took too long</div>';
-  };
-  xhr.send('errorText=' + encodeURIComponent(text));
-}
-
-function fetchCrumbToken() {
-  return new Promise((resolve, reject) => {
-    // Get the Jenkins root URL by extracting it from the current page
-    const jenkinsRootUrl = getRootURL();
-    const crumbUrl = jenkinsRootUrl + '/crumbIssuer/api/json';
-    
-    const xhr = new XMLHttpRequest();
-    xhr.open('GET', crumbUrl, true);
-    xhr.onload = function () {
-      if (xhr.status === 200) {
-        try {
-          const response = JSON.parse(xhr.responseText);
-          resolve({ headerName: response.crumbRequestField, value: response.crumb });
-        } catch (err) {
-          reject(err);
-        }
-      } else {
-        reject(new Error('Failed to fetch CSRF token'));
-      }
-    };
-    xhr.onerror = () => reject(new Error('XHR Error during crumb fetch'));
-    xhr.send();
+    return response.text();
+  })
+  .then(responseText => {
+    try {
+      // Try to parse as JSON first
+      const jsonResponse = JSON.parse(responseText);
+      result.innerHTML = '<div style="white-space: pre-wrap;">' + jsonResponse + '</div>';
+    } catch (e) {
+      // If not JSON, display as plain text
+      result.innerHTML = '<div style="white-space: pre-wrap;">' + responseText + '</div>';
+    }
+  })
+  .catch(error => {
+    result.innerHTML = `<div style="color:red;"><strong>Error:</strong> ${error.message}</div>`;
   });
 }
