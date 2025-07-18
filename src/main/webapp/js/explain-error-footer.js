@@ -170,6 +170,33 @@ function createButton(text, className, onClick) {
   return btn;
 }
 
+function getRootURL() {
+  // Extract Jenkins root URL from current page
+  // This handles cases where Jenkins runs in a context path like /jenkins
+  const path = window.location.pathname;
+  
+  // Look for common Jenkins URL patterns to determine the root
+  if (path.includes('/job/')) {
+    // Extract everything before /job/
+    return path.substring(0, path.indexOf('/job/'));
+  } else if (path.includes('/console')) {
+    // Extract everything before the job-specific part
+    // Pattern: /[context]/job/jobname/build/console
+    const parts = path.split('/');
+    let rootParts = [];
+    for (let i = 0; i < parts.length; i++) {
+      if (parts[i] === 'job') {
+        break;
+      }
+      rootParts.push(parts[i]);
+    }
+    return rootParts.join('/') || '';
+  }
+  
+  // Fallback: assume root context
+  return '';
+}
+
 function explainConsoleError() {
   const output =
     document.querySelector('#out') ||
@@ -199,6 +226,7 @@ function explainConsoleError() {
     <div style="margin-top: 10px; font-size: 12px; color: #666;">
       <strong>Debug Info:</strong><br/>
       Current URL: ${window.location.href}<br/>
+      Jenkins Root: ${getRootURL()}<br/>
       Request will be sent to: <span id="debug-url"></span><br/>
       Console text length: ${text.length} characters<br/>
       <span id="debug-status">Fetching CSRF token...</span>
@@ -248,8 +276,12 @@ function sendExplainRequest(text, crumb, result) {
 
 function fetchCrumbToken() {
   return new Promise((resolve, reject) => {
+    // Get the Jenkins root URL by extracting it from the current page
+    const jenkinsRootUrl = getRootURL();
+    const crumbUrl = jenkinsRootUrl + '/crumbIssuer/api/json';
+    
     const xhr = new XMLHttpRequest();
-    xhr.open('GET', '/crumbIssuer/api/json', true);
+    xhr.open('GET', crumbUrl, true);
     xhr.onload = function () {
       if (xhr.status === 200) {
         try {
