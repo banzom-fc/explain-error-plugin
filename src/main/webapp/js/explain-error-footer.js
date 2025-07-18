@@ -3,8 +3,6 @@ document.addEventListener('DOMContentLoaded', function () {
   console.log('Current URL:', window.location.href);
   console.log('Current pathname:', window.location.pathname);
 
-  injectStyles();
-
   if (
     window.location.pathname.includes('/console') &&
     !window.location.pathname.includes('/error-explanation')
@@ -15,78 +13,6 @@ document.addEventListener('DOMContentLoaded', function () {
     console.log('Not a console page or already on error explanation page, skipping');
   }
 });
-
-function injectStyles() {
-  const style = document.createElement('style');
-  style.type = 'text/css';
-  style.innerHTML = `
-    .explain-error-container {
-      margin: 10px 0;
-      padding: 10px;
-      background: #f0f0f0;
-      border: 1px solid #ccc;
-      border-radius: 4px;
-    }
-    .explain-error-btn {
-      margin-right: 5px !important;
-    }
-    .jenkins-button.explain-error-btn {
-      display: inline-block;
-      margin-right: 5px;
-    }
-    .explain-error-result {
-      margin-top: 10px;
-      padding: 10px;
-      background: white;
-      border: 1px solid #ddd;
-      border-radius: 4px;
-      max-height: 400px;
-      overflow-y: auto;
-    }
-    .explain-error-result h3 {
-      margin-top: 0;
-      color: #333;
-    }
-    .spinner {
-      border: 4px solid #f3f3f3;
-      border-top: 4px solid #007acc;
-      border-radius: 50%;
-      width: 20px;
-      height: 20px;
-      animation: spin 1s linear infinite;
-    }
-    @keyframes spin {
-      0% { transform: rotate(0deg); }
-      100% { transform: rotate(360deg); }
-    }
-    /* Console output styling to match sidebar */
-    #out, pre.console-output, pre {
-      background: #f8f9fa !important;
-      border: 1px solid #dee2e6 !important;
-      border-radius: 6px !important;
-      padding: 15px !important;
-      margin: 10px 0 !important;
-      font-family: 'Consolas', 'Monaco', 'Courier New', monospace !important;
-      font-size: 13px !important;
-      line-height: 1.5 !important;
-      color: #495057 !important;
-      box-shadow: 0 1px 3px rgba(0,0,0,0.1) !important;
-    }
-    /* AI explanation header styling */
-    #ai-explanation-header h3 {
-      background: #e9ecef !important;
-      padding: 10px 15px !important;
-      margin: 10px 0 0 0 !important;
-      border: 1px solid #dee2e6 !important;
-      border-radius: 6px 6px 0 0 !important;
-      color: #495057 !important;
-      font-size: 16px !important;
-      font-weight: 600 !important;
-    }
-  `;
-  document.head.appendChild(style);
-  console.log('CSS styles injected');
-}
 
 function addExplainErrorButton() {
   // First try to find the existing console button bar
@@ -213,17 +139,18 @@ function explainConsoleError() {
   if (!explanationHeader) {
     explanationHeader = document.createElement('div');
     explanationHeader.id = 'ai-explanation-header';
-    explanationHeader.innerHTML = '<h3 style="margin: 10px 0; color: #333;">AI Error Explanation:</h3>';
+    explanationHeader.className = 'ai-explanation-header';
+    explanationHeader.innerHTML = '<h3>AI Error Explanation:</h3>';
     output.parentNode.insertBefore(explanationHeader, result);
   }
 
   result.style.display = 'block';
   result.innerHTML = `
-    <div style="text-align: center; padding: 20px;">
-      <div class="spinner"></div>
+    <div class="explain-error-loading">
+      <div class="explain-error-spinner"></div>
       <span>Analyzing error logs...</span>
     </div>
-    <div style="margin-top: 10px; font-size: 12px; color: #666;">
+    <div class="explain-error-debug">
       <strong>Debug Info:</strong><br/>
       Current URL: ${window.location.href}<br/>
       Jenkins Root: ${getRootURL()}<br/>
@@ -266,13 +193,13 @@ function sendExplainRequest(text, result) {
     try {
       // Try to parse as JSON first
       const jsonResponse = JSON.parse(responseText);
-      result.innerHTML = '<div style="white-space: pre-wrap;">' + jsonResponse + '</div>';
+      result.innerHTML = '<div class="explain-error-message">' + jsonResponse + '</div>';
     } catch (e) {
       // If not JSON, display as plain text
-      result.innerHTML = '<div style="white-space: pre-wrap;">' + responseText + '</div>';
+      result.innerHTML = '<div class="explain-error-message">' + responseText + '</div>';
     }
   })
   .catch(error => {
-    result.innerHTML = `<div style="color:red;"><strong>Error:</strong> ${error.message}</div>`;
+    result.innerHTML = `<div class="explain-error-error">Error: ${error.message}</div>`;
   });
 }

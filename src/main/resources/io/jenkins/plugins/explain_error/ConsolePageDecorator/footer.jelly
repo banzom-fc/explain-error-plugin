@@ -1,4 +1,5 @@
 <?jelly escape-by-default='true'?>
 <j:jelly xmlns:j="jelly:core">
+    <link rel="stylesheet" type="text/css" href="${rootURL}/plugin/explain-error/css/explain-error.css"/>
     <script src="${rootURL}/plugin/explain-error/js/explain-error-footer.js" type="text/javascript"/>
 </j:jelly>
