@@ -86,9 +86,6 @@ This guide will help you get started with development and contribution.
 # Run unit tests
 mvn test
 
-# Run with coverage report
-mvn clean test jacoco:report
-
 # Run integration tests
 mvn verify
 
