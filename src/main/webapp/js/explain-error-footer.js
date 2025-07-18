@@ -28,11 +28,11 @@ function injectStyles() {
       border-radius: 4px;
     }
     .explain-error-btn {
-      margin-right: 10px !important;
+      margin-right: 5px !important;
     }
     .jenkins-button.explain-error-btn {
       display: inline-block;
-      margin-right: 10px;
+      margin-right: 5px;
     }
     .explain-error-result {
       margin-top: 10px;
@@ -58,6 +58,30 @@ function injectStyles() {
     @keyframes spin {
       0% { transform: rotate(0deg); }
       100% { transform: rotate(360deg); }
+    }
+    /* Console output styling to match sidebar */
+    #out, pre.console-output, pre {
+      background: #f8f9fa !important;
+      border: 1px solid #dee2e6 !important;
+      border-radius: 6px !important;
+      padding: 15px !important;
+      margin: 10px 0 !important;
+      font-family: 'Consolas', 'Monaco', 'Courier New', monospace !important;
+      font-size: 13px !important;
+      line-height: 1.5 !important;
+      color: #495057 !important;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1) !important;
+    }
+    /* AI explanation header styling */
+    #ai-explanation-header h3 {
+      background: #e9ecef !important;
+      padding: 10px 15px !important;
+      margin: 10px 0 0 0 !important;
+      border: 1px solid #dee2e6 !important;
+      border-radius: 6px 6px 0 0 !important;
+      color: #495057 !important;
+      font-size: 16px !important;
+      font-weight: 600 !important;
     }
   `;
   document.head.appendChild(style);
@@ -130,10 +154,9 @@ function addExplainErrorButton() {
   result.className = 'explain-error-result';
   result.style.display = 'none';
   
-  // Insert result container after console output or after button container
-  const insertAfter = consoleOutput || buttonContainer;
-  if (insertAfter && insertAfter.parentNode) {
-    insertAfter.parentNode.insertBefore(result, insertAfter.nextSibling);
+  // Insert result container before console output
+  if (consoleOutput && consoleOutput.parentNode) {
+    consoleOutput.parentNode.insertBefore(result, consoleOutput);
   } else {
     document.body.appendChild(result);
   }
@@ -157,6 +180,15 @@ function explainConsoleError() {
 
   const text = output.textContent || output.innerText;
   if (!text.trim()) return alert('No console output found');
+
+  // Show AI Error Explanation header before console output
+  let explanationHeader = document.getElementById('ai-explanation-header');
+  if (!explanationHeader) {
+    explanationHeader = document.createElement('div');
+    explanationHeader.id = 'ai-explanation-header';
+    explanationHeader.innerHTML = '<h3 style="margin: 10px 0; color: #333;">AI Error Explanation:</h3>';
+    output.parentNode.insertBefore(explanationHeader, result);
+  }
 
   result.style.display = 'block';
   result.innerHTML = `
@@ -197,7 +229,7 @@ function sendExplainRequest(text, crumb, result) {
     if (xhr.status === 200) {
       try {
         const response = JSON.parse(xhr.responseText);
-        result.innerHTML = '<h3>AI Error Explanation:</h3><div style="white-space: pre-wrap;">' + response + '</div>';
+        result.innerHTML = '<div style="white-space: pre-wrap;">' + response + '</div>';
       } catch (e) {
         result.innerHTML = `<div style="color:red;"><strong>JSON Error:</strong> ${e.message}</div>`;
       }
