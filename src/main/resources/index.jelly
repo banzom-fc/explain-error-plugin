@@ -1,4 +1,4 @@
 <?jelly escape-by-default='true'?>
 <div>
-    A Jenkins plugin that helps understand pipeline failures by sending error logs to an AI (like ChatGPT) and get human-readable explanations directly on the job page.
+    AI-powered Jenkins plugin that explains pipeline and job failures with human-readable insights.
 </div>

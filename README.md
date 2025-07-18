@@ -155,9 +155,9 @@ For any build (including non-pipeline jobs), you can manually trigger error anal
 
 | Issue | Solution |
 |-------|----------|
-| **"API key not configured"** | Add your OpenAI API key in Jenkins global configuration |
-| **"Authentication failed"** | Verify your API key is valid and has sufficient credits |
-| **"Rate limit exceeded"** | Reduce usage frequency or upgrade your OpenAI plan |
+| **API key not configured** | Add your OpenAI API key in Jenkins global configuration |
+| **Authentication failed** | Verify your API key is valid and has sufficient credits |
+| **Rate limit exceeded** | Reduce usage frequency or upgrade your OpenAI plan |
 | **Plugin not appearing** | Ensure Jenkins version ≥ 2.479.3 and restart after installation |
 
 ### Debug Mode
@@ -179,20 +179,17 @@ Enable debug logging in Jenkins:
 ### Getting Help
 
 - **Bug Reports**: [GitHub Issues](https://github.com/jenkinsci/explain-error-plugin/issues)
-- **Feature Requests**: [GitHub Discussions](https://github.com/jenkinsci/explain-error-plugin/discussions)
 - **Contributing**: We welcome contributions! Please see our [Contributing Guide](CONTRIBUTING.md)
 - **Security Issues**: Report privately to security@jenkins.io
 
 ## License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE.md) file for details.
+This project is licensed under the [MIT License](LICENSE.md).
 
 ## Acknowledgments
 
-**Made with ❤️ for the Jenkins community**
+**Built with ❤️ for the Jenkins community.**
 
-If this plugin has helped you or your team, we'd appreciate your support:
+If this plugin has been helpful to you or your team, please consider giving it a ⭐ on GitHub.
 
-⭐ **Star us on GitHub** - [jenkinsci/explain-error-plugin](https://github.com/jenkinsci/explain-error-plugin)
-
-Your star helps others discover this plugin and motivates us to keep improving it!
+Your support helps others find this plugin and encourages us to keep making it better!
