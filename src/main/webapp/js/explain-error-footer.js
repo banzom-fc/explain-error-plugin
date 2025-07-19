@@ -1,16 +1,9 @@
 document.addEventListener('DOMContentLoaded', function () {
-  console.log('DOMContentLoaded event fired');
-  console.log('Current URL:', window.location.href);
-  console.log('Current pathname:', window.location.pathname);
-
   if (
     window.location.pathname.includes('/console') &&
     !window.location.pathname.includes('/error-explanation')
   ) {
-    console.log('Console page detected, adding button');
     addExplainErrorButton();
-  } else {
-    console.log('Not a console page or already on error explanation page, skipping');
   }
 });
 
@@ -51,7 +44,6 @@ function addExplainErrorButton() {
   }
 
   if (document.querySelector('.explain-error-btn')) {
-    console.log('Explain Error button already exists, skipping');
     return;
   }
 
@@ -59,14 +51,11 @@ function addExplainErrorButton() {
 
   // If we found the button container, add our button there
   if (buttonContainer) {
-    console.log('Adding button to existing button container');
     buttonContainer.insertBefore(explainBtn, buttonContainer.firstChild);
   } else if (consoleButtonBar) {
-    console.log('Adding button to console button bar');
     consoleButtonBar.appendChild(explainBtn);
   } else {
     // Fallback: create a simple container above console output
-    console.log('Creating new button container above console');
     const container = document.createElement('div');
     container.className = 'explain-error-container';
     container.style.marginBottom = '10px';
@@ -150,14 +139,6 @@ function explainConsoleError() {
       <div class="explain-error-spinner"></div>
       <span>Analyzing error logs...</span>
     </div>
-    <div class="explain-error-debug">
-      <strong>Debug Info:</strong><br/>
-      Current URL: ${window.location.href}<br/>
-      Jenkins Root: ${getRootURL()}<br/>
-      Request will be sent to: <span id="debug-url"></span><br/>
-      Console text length: ${text.length} characters<br/>
-      <span id="debug-status">Sending request...</span>
-    </div>
   `;
 
   sendExplainRequest(text, result);
@@ -166,7 +147,6 @@ function explainConsoleError() {
 function sendExplainRequest(text, result) {
   const basePath = window.location.pathname.replace(/\/console$/, '');
   const url = basePath + '/console-explain-error/explainConsoleError';
-  document.getElementById('debug-url').textContent = url;
 
   // Use Jenkins' global crumb object if available, otherwise create empty headers
   const headers = {

@@ -39,6 +39,9 @@ This guide will help you get started with development and contribution.
    
    # Or on a custom port
    mvn hpi:run -Dport=5000
+
+   # check for code quality issues
+   mvn spotbugs:check
    ```
 
 ### 2. Plugin Installation & Testing
