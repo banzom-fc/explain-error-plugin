@@ -1,15 +1,17 @@
 package io.jenkins.plugins.explain_error;
 
-import hudson.model.Action;
+import hudson.model.Run;
+import jenkins.model.RunAction2;
 
 /**
  * Build action to store and display error explanations.
  */
-public class ErrorExplanationAction implements Action {
+public class ErrorExplanationAction implements RunAction2 {
 
     private final String explanation;
     private final String originalErrorLogs;
     private final long timestamp;
+    private transient Run<?, ?> run;
 
     public ErrorExplanationAction(String explanation, String originalErrorLogs) {
         this.explanation = explanation;
@@ -46,5 +48,23 @@ public class ErrorExplanationAction implements Action {
 
     public String getFormattedTimestamp() {
         return new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new java.util.Date(timestamp));
+    }
+
+    @Override
+    public void onAttached(Run<?, ?> r) {
+        this.run = r;
+    }
+
+    @Override
+    public void onLoad(Run<?, ?> r) {
+        this.run = r;
+    }
+
+    /**
+     * Get the associated run.
+     * @return the run this action is attached to
+     */
+    public Run<?, ?> getRun() {
+        return run;
     }
 }
