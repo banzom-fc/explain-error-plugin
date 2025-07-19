@@ -4,18 +4,9 @@
         <l:main-panel>
             <h1>AI Error Explanation</h1>
             
-            <div style="margin-bottom: 20px;">
-                <strong>Generated on:</strong> ${it.formattedTimestamp}
-            </div>
-            
-            <div style="background-color: #f8f9fa; padding: 15px; border-radius: 5px; margin-bottom: 20px;">
+            <l:card title="Generated on: ${it.formattedTimestamp}">
                 <pre style="white-space: pre-wrap; word-wrap: break-word;">${it.explanation}</pre>
-            </div>
-            
-            <div style="background-color: #fff3cd; padding: 15px; border-radius: 5px;">
-                <h3>Original Error Logs</h3>
-                <pre style="white-space: pre-wrap; word-wrap: break-word; max-height: 400px; overflow-y: auto;">${it.originalErrorLogs}</pre>
-            </div>
+            </l:card>
         </l:main-panel>
     </l:layout>
 </j:jelly>
