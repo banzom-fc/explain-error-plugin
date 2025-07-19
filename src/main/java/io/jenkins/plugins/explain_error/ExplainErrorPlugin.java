@@ -8,7 +8,7 @@ import jenkins.model.GlobalConfiguration;
 import net.sf.json.JSONObject;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.DataBoundSetter;
-import org.kohsuke.stapler.StaplerRequest;
+import org.kohsuke.stapler.StaplerRequest2;
 
 /**
  * Main plugin class for the Explain Error Plugin.
@@ -45,7 +45,7 @@ public class ExplainErrorPlugin extends Plugin {
         }
 
         @Override
-        public boolean configure(StaplerRequest req, JSONObject json) throws Descriptor.FormException {
+        public boolean configure(StaplerRequest2 req, JSONObject json) throws Descriptor.FormException {
             req.bindJSON(this, json);
             save();
             return true;

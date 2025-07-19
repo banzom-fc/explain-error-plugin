@@ -7,8 +7,8 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.logging.Logger;
 import javax.servlet.ServletException;
-import org.kohsuke.stapler.StaplerRequest;
-import org.kohsuke.stapler.StaplerResponse;
+import org.kohsuke.stapler.StaplerRequest2;
+import org.kohsuke.stapler.StaplerResponse2;
 import org.kohsuke.stapler.interceptor.RequirePOST;
 
 /**
@@ -45,7 +45,7 @@ public class ConsoleExplainErrorAction implements Action {
      * Called via JavaScript from the console output page.
      */
     @RequirePOST
-    public void doExplainConsoleError(StaplerRequest req, StaplerResponse rsp) throws ServletException, IOException {        
+    public void doExplainConsoleError(StaplerRequest2 req, StaplerResponse2 rsp) throws ServletException, IOException {        
         try {
             // Check if user has permission to view this build
             run.checkPermission(hudson.model.Item.READ);
@@ -77,7 +77,7 @@ public class ConsoleExplainErrorAction implements Action {
         }
     }
 
-    private void writeJsonResponse(StaplerResponse rsp, String message) throws IOException {
+    private void writeJsonResponse(StaplerResponse2 rsp, String message) throws IOException {
         rsp.setContentType("application/json");
         rsp.setCharacterEncoding("UTF-8");
         PrintWriter writer = rsp.getWriter();
