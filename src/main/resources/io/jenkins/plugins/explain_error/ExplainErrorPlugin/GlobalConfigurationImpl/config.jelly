@@ -22,10 +22,6 @@
                 <f:validateButton title="Test Configuration" progress="Testing..." 
                                 method="testConfiguration" with="apiKey,apiUrl,model" />
             </div>
-            <div style="margin-top: 10px; font-size: 12px; color: #666;">
-                <strong>Test Configuration:</strong> This will make a test API call to validate your OpenAI configuration.
-                <br/>Make sure to save your configuration first, or enter the values above before testing.
-            </div>
         </f:entry>
     </f:section>
 </j:jelly>
