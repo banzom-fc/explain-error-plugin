@@ -129,7 +129,6 @@ function explainConsoleError() {
     explanationHeader = document.createElement('div');
     explanationHeader.id = 'ai-explanation-header';
     explanationHeader.className = 'ai-explanation-header';
-    explanationHeader.innerHTML = '<h3>AI Error Explanation:</h3>';
     output.parentNode.insertBefore(explanationHeader, result);
   }
 

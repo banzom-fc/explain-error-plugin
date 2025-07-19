@@ -7,34 +7,33 @@
 
 /* Container for when we need to create our own button bar */
 .explain-error-container {
-  margin: 10px 0;
-  padding: 10px;
-  background: var(--background);
-  border: 1px solid var(--medium-grey);
-  border-radius: 6px;
+  background-color: #f8f9fa;
+  padding: 15px;
+  border-radius: 5px;
+  margin-bottom: 20px;
+  border: 1px solid #dee2e6;
 }
 
-/* Results container using Jenkins panel styling */
+/* Results container using consistent styling */
 .explain-error-result {
-  margin-top: 10px;
+  background-color: #f8f9fa;
   padding: 15px;
-  background: var(--background);
-  border: 1px solid var(--medium-grey);
-  border-radius: 6px;
+  border-radius: 5px;
+  margin-bottom: 20px;
   max-height: 400px;
   overflow-y: auto;
-  box-shadow: var(--box-shadow);
+  border: 1px solid #dee2e6;
 }
 
 .explain-error-result h3 {
   margin-top: 0;
-  color: var(--text-color);
+  color: #212529;
 }
 
-/* Loading spinner using Jenkins colors */
+/* Loading spinner using consistent colors */
 .explain-error-spinner {
-  border: 3px solid var(--light-grey);
-  border-top: 3px solid var(--focus-color);
+  border: 3px solid #dee2e6;
+  border-top: 3px solid #007bff;
   border-radius: 50%;
   width: 20px;
   height: 20px;
@@ -48,43 +47,35 @@
   100% { transform: rotate(360deg); }
 }
 
-/* AI explanation header using Jenkins panel header styling */
+/* AI explanation header using consistent styling */
 .ai-explanation-header h3 {
-  background: var(--light-grey) !important;
-  padding: 10px 15px !important;
-  margin: 10px 0 0 0 !important;
-  border: 1px solid var(--medium-grey) !important;
-  border-radius: 6px 6px 0 0 !important;
-  color: var(--text-color) !important;
+  background-color: #f8f9fa !important;
+  padding: 15px !important;
+  margin: 0 0 20px 0 !important;
+  border: 1px solid #dee2e6 !important;
+  border-radius: 5px !important;
+  color: #212529 !important;
   font-size: 16px !important;
   font-weight: 600 !important;
-}
-
-/* Debug info styling */
-.explain-error-debug {
-  margin-top: 10px;
-  font-size: 12px;
-  color: var(--text-color-secondary);
-  padding: 10px;
-  background: var(--very-light-grey);
-  border-radius: 4px;
 }
 
 /* Loading container */
 .explain-error-loading {
   text-align: center;
   padding: 20px;
-  color: var(--text-color);
+  color: #212529;
 }
 
-/* Error message styling */
+/* Error message styling with consistent formatting */
 .explain-error-message {
   white-space: pre-wrap;
-  font-family: var(--font-family-mono);
+  word-wrap: break-word;
+  font-family: monospace;
   line-height: 1.5;
+  margin: 0;
 }
 
 .explain-error-error {
-  color: var(--error-color);
+  color: #dc3545;
   font-weight: bold;
 }

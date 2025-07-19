@@ -9,7 +9,6 @@
             </div>
             
             <div style="background-color: #f8f9fa; padding: 15px; border-radius: 5px; margin-bottom: 20px;">
-                <h3>AI Error Explanation</h3>
                 <pre style="white-space: pre-wrap; word-wrap: break-word;">${it.explanation}</pre>
             </div>
             
