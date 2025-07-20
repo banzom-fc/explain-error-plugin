@@ -102,24 +102,10 @@ public class ExplainErrorPlugin extends Plugin {
                                                   @QueryParameter("model") String model) {
             Jenkins.get().checkPermission(Jenkins.ADMINISTER);
 
-            // Convert apiKey String to Secret if provided, else use saved Secret
-            Secret testApiKeySecret = (apiKey != null && !apiKey.trim().isEmpty())
-                    ? Secret.fromString(apiKey)
-                    : getApiKey();
-
-            String testApiKey = testApiKeySecret != null ? testApiKeySecret.getPlainText() : null;
-            String testApiUrl = (apiUrl != null && !apiUrl.trim().isEmpty()) ? apiUrl : getApiUrl();
-            String testModel = (model != null && !model.trim().isEmpty()) ? model : getModel();
-
-            if (testApiKey == null || testApiKey.trim().isEmpty()) {
-                return FormValidation.error("API Key is required. Please enter your OpenAI API key.");
-            }
-            if (testApiUrl == null || testApiUrl.trim().isEmpty()) {
-                return FormValidation.error("API URL is required.");
-            }
-            if (testModel == null || testModel.trim().isEmpty()) {
-                return FormValidation.error("Model is required.");
-            }
+            // Validate only the provided parameters
+            Secret testApiKeySecret = (apiKey != null) ? Secret.fromString(apiKey) : null;
+            String testApiUrl = apiUrl != null ? apiUrl : "";
+            String testModel = model != null ? model : "";
 
             try {
                 GlobalConfigurationImpl tempConfig = new GlobalConfigurationImpl();
