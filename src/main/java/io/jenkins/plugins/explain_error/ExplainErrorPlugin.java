@@ -12,6 +12,7 @@ import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.DataBoundSetter;
 import org.kohsuke.stapler.QueryParameter;
 import org.kohsuke.stapler.StaplerRequest2;
+import org.kohsuke.stapler.interceptor.RequirePOST;
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -103,6 +104,7 @@ public class ExplainErrorPlugin extends Plugin {
          * Method to test the AI API configuration.
          * This is called when the "Test Configuration" button is clicked.
          */
+        @RequirePOST
         public FormValidation doTestConfiguration(@QueryParameter("apiKey") String apiKey,
                                                   @QueryParameter("apiUrl") String apiUrl,
                                                   @QueryParameter("model") String model) {
