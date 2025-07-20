@@ -51,13 +51,13 @@ public class ExplainErrorPlugin extends Plugin {
         }
 
         // Getters and setters
-        public String getApiKey() {
-            return Secret.toString(apiKey);
+        public Secret getApiKey() {
+            return apiKey;
         }
 
         @DataBoundSetter
-        public void setApiKey(String apiKey) {
-            this.apiKey = Secret.fromString(apiKey);
+        public void setApiKey(Secret apiKey) {
+            this.apiKey = apiKey;
         }
 
         public String getApiUrl() {
@@ -100,40 +100,36 @@ public class ExplainErrorPlugin extends Plugin {
         public FormValidation doTestConfiguration(@QueryParameter("apiKey") String apiKey,
                                                   @QueryParameter("apiUrl") String apiUrl,
                                                   @QueryParameter("model") String model) {
-            // Permission check to restrict access
             Jenkins.get().checkPermission(Jenkins.ADMINISTER);
 
-            // Use provided parameters or fall back to saved configuration
-            String testApiKey = (apiKey != null && !apiKey.trim().isEmpty()) ? apiKey : getApiKey();
+            // Convert apiKey String to Secret if provided, else use saved Secret
+            Secret testApiKeySecret = (apiKey != null && !apiKey.trim().isEmpty())
+                    ? Secret.fromString(apiKey)
+                    : getApiKey();
+
+            String testApiKey = testApiKeySecret != null ? testApiKeySecret.getPlainText() : null;
             String testApiUrl = (apiUrl != null && !apiUrl.trim().isEmpty()) ? apiUrl : getApiUrl();
             String testModel = (model != null && !model.trim().isEmpty()) ? model : getModel();
 
-            // Validate required fields
             if (testApiKey == null || testApiKey.trim().isEmpty()) {
                 return FormValidation.error("API Key is required. Please enter your OpenAI API key.");
             }
-
             if (testApiUrl == null || testApiUrl.trim().isEmpty()) {
                 return FormValidation.error("API URL is required.");
             }
-
             if (testModel == null || testModel.trim().isEmpty()) {
                 return FormValidation.error("Model is required.");
             }
 
             try {
-                // Create a temporary configuration for testing
                 GlobalConfigurationImpl tempConfig = new GlobalConfigurationImpl();
-                tempConfig.setApiKey(testApiKey);
+                tempConfig.setApiKey(testApiKeySecret);
                 tempConfig.setApiUrl(testApiUrl);
                 tempConfig.setModel(testModel);
 
-                // Create AIService instance with test configuration
                 AIService aiService = new AIService(tempConfig);
-                
-                // Make a simple test call
                 String testResponse = aiService.explainError("Test configuration call - please respond with 'Configuration test successful'");
-                
+
                 if (testResponse != null && testResponse.contains("Configuration test successful")) {
                     return FormValidation.ok("Configuration test successful! API connection is working properly.");
                 } else if (testResponse != null && testResponse.contains("AI API Error:")) {
@@ -143,7 +139,7 @@ public class ExplainErrorPlugin extends Plugin {
                 } else {
                     return FormValidation.ok("API connection established, but got unexpected response: " + testResponse);
                 }
-                
+
             } catch (IOException e) {
                 Logger.getLogger(GlobalConfigurationImpl.class.getName()).log(Level.WARNING, "API test failed", e);
                 return FormValidation.error("Connection failed: " + e.getMessage() + ". Please check your API URL and network connection.");

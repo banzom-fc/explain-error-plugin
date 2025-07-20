@@ -25,7 +25,7 @@ public class ErrorExplainer {
                 return;
             }
 
-            if (StringUtils.isBlank(config.getApiKey())) {
+            if (config.getApiKey() == null || StringUtils.isBlank(config.getApiKey().getPlainText())) {
                 listener.getLogger()
                         .println("ERROR: API key is not configured. Please configure it in Jenkins global settings.");
                 return;
@@ -93,7 +93,7 @@ public class ErrorExplainer {
                 return "AI error explanation is disabled in global configuration.";
             }
 
-            if (StringUtils.isBlank(config.getApiKey())) {
+            if (config.getApiKey() == null || StringUtils.isBlank(config.getApiKey().getPlainText())) {
                 LOGGER.warning("API key is not configured");
                 return "ERROR: API key is not configured. Please configure it in Jenkins global settings.";
             }
