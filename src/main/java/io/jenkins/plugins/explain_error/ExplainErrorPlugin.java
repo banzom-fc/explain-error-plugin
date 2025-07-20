@@ -43,14 +43,6 @@ public class ExplainErrorPlugin extends Plugin {
             load();
         }
 
-        @DataBoundConstructor
-        public GlobalConfigurationImpl(String apiKey, String apiUrl, String model, boolean enableExplanation) {
-            this.apiKey = Secret.fromString(apiKey);
-            this.apiUrl = apiUrl;
-            this.model = model;
-            this.enableExplanation = enableExplanation;
-        }
-
         @Override
         public boolean configure(StaplerRequest2 req, JSONObject json) throws Descriptor.FormException {
             req.bindJSON(this, json);
