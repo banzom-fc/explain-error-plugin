@@ -6,6 +6,7 @@ import hudson.model.Descriptor;
 import hudson.util.FormValidation;
 import hudson.util.Secret;
 import jenkins.model.GlobalConfiguration;
+import jenkins.model.Jenkins;
 import net.sf.json.JSONObject;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.DataBoundSetter;
@@ -105,7 +106,9 @@ public class ExplainErrorPlugin extends Plugin {
         public FormValidation doTestConfiguration(@QueryParameter("apiKey") String apiKey,
                                                   @QueryParameter("apiUrl") String apiUrl,
                                                   @QueryParameter("model") String model) {
-            
+            // Permission check to restrict access
+            Jenkins.get().checkPermission(Jenkins.ADMINISTER);
+
             // Use provided parameters or fall back to saved configuration
             String testApiKey = (apiKey != null && !apiKey.trim().isEmpty()) ? apiKey : getApiKey();
             String testApiUrl = (apiUrl != null && !apiUrl.trim().isEmpty()) ? apiUrl : getApiUrl();
