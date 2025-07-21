@@ -90,37 +90,19 @@ function explainConsoleError() {
     document.querySelector('#out') ||
     document.querySelector('pre.console-output') ||
     document.querySelector('pre');
-  const result = document.getElementById('explain-error-result');
-  if (!output || !result) return;
+  if (!output) return;
 
   const text = output.textContent || output.innerText;
   if (!text.trim()) return alert('No console output found');
 
-  // Show AI Error Explanation header before console output
-  let explanationHeader = document.getElementById('ai-explanation-header');
-  if (!explanationHeader) {
-    explanationHeader = document.createElement('div');
-    explanationHeader.id = 'ai-explanation-header';
-    explanationHeader.className = 'ai-explanation-header';
-    output.parentNode.insertBefore(explanationHeader, result);
-  }
-
-  result.style.display = 'block';
-  result.innerHTML = `
-    <div class="explain-error-loading">
-      <div class="explain-error-spinner"></div>
-      <span>Analyzing error logs...</span>
-    </div>
-  `;
-
-  sendExplainRequest(text, result);
+  showSpinner();
+  sendExplainRequest(text);
 }
 
-function sendExplainRequest(text, result) {
+function sendExplainRequest(text) {
   const basePath = window.location.pathname.replace(/\/console$/, '');
   const url = basePath + '/console-explain-error/explainConsoleError';
 
-  // Always use Jenkins' global crumb object to wrap headers
   const headers = crumb.wrap({
     "Content-Type": "application/x-www-form-urlencoded",
   });
@@ -139,15 +121,47 @@ function sendExplainRequest(text, result) {
   })
   .then(responseText => {
     try {
-      // Try to parse as JSON first
       const jsonResponse = JSON.parse(responseText);
-      result.innerHTML = '<div class="explain-error-message">' + jsonResponse + '</div>';
+      showErrorExplanation(jsonResponse);
     } catch (e) {
-      // If not JSON, display as plain text
-      result.innerHTML = '<div class="explain-error-message">' + responseText + '</div>';
+      showErrorExplanation(responseText);
     }
   })
   .catch(error => {
-    result.innerHTML = `<div class="explain-error-error">Error: ${error.message}</div>`;
+    showErrorExplanation(`Error: ${error.message}`);
+    
   });
 }
+
+function showErrorExplanation(message) {
+  const container = document.getElementById('explain-error-container');
+  const spinner = document.getElementById('explain-error-spinner');
+  const content = document.getElementById('explain-error-content');
+
+  container.classList.remove('jenkins-hidden');
+  spinner.classList.add('jenkins-hidden');
+  content.textContent = message;
+}
+
+function showSpinner() {
+  const container = document.getElementById('explain-error-container');
+  const spinner = document.getElementById('explain-error-spinner');
+  container.classList.remove('jenkins-hidden');
+  spinner.classList.remove('jenkins-hidden');
+}
+
+function hideErrorExplanation() {
+  const container = document.getElementById('explain-error-container');
+  container.classList.add('jenkins-hidden');
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+  const container = document.getElementById('explain-error-container');
+  const consoleOutput =
+    document.querySelector('#out') ||
+    document.querySelector('pre.console-output') ||
+    document.querySelector('pre');
+  if (container && consoleOutput && consoleOutput.parentNode) {
+    consoleOutput.parentNode.insertBefore(container, consoleOutput);
+  }
+});

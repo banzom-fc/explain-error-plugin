@@ -16,9 +16,9 @@ This guide will help you get started with development and contribution.
 
 ### Development Setup
 
-1. **Clone the repository:**
+1. **Fork and clone the repository:**
    ```bash
-   git clone https://github.com/jenkinsci/explain-error-plugin.git
+   git clone https://github.com/<your-username>/explain-error-plugin.git
    cd explain-error-plugin
    ```
 
