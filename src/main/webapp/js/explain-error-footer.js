@@ -85,33 +85,6 @@ function createButton(text, className, onClick) {
   return btn;
 }
 
-function getRootURL() {
-  // Extract Jenkins root URL from current page
-  // This handles cases where Jenkins runs in a context path like /jenkins
-  const path = window.location.pathname;
-  
-  // Look for common Jenkins URL patterns to determine the root
-  if (path.includes('/job/')) {
-    // Extract everything before /job/
-    return path.substring(0, path.indexOf('/job/'));
-  } else if (path.includes('/console')) {
-    // Extract everything before the job-specific part
-    // Pattern: /[context]/job/jobname/build/console
-    const parts = path.split('/');
-    let rootParts = [];
-    for (let i = 0; i < parts.length; i++) {
-      if (parts[i] === 'job') {
-        break;
-      }
-      rootParts.push(parts[i]);
-    }
-    return rootParts.join('/') || '';
-  }
-  
-  // Fallback: assume root context
-  return '';
-}
-
 function explainConsoleError() {
   const output =
     document.querySelector('#out') ||
