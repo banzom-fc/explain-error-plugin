@@ -147,15 +147,10 @@ function sendExplainRequest(text, result) {
   const basePath = window.location.pathname.replace(/\/console$/, '');
   const url = basePath + '/console-explain-error/explainConsoleError';
 
-  // Use Jenkins' global crumb object if available, otherwise create empty headers
-  const headers = {
-    "Content-Type": "application/x-www-form-urlencoded"
-  };
-  
-  // Jenkins provides a global crumb object
-  if (typeof crumb !== 'undefined' && crumb.wrap) {
-    Object.assign(headers, crumb.wrap({}));
-  }
+  // Always use Jenkins' global crumb object to wrap headers
+  const headers = crumb.wrap({
+    "Content-Type": "application/x-www-form-urlencoded",
+  });
 
   fetch(url, {
     method: "POST",
