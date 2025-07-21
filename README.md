@@ -8,37 +8,27 @@ AI-powered Jenkins plugin that explains pipeline and job failures with human-rea
 
 ## Overview
 
-The Explain Error Plugin transforms cryptic build error logs into clear, actionable insights using AI technology. Whether you're dealing with compilation errors, test failures, or deployment issues, this plugin helps you understand what went wrong and how to fix it.
+Tired of digging through long Jenkins logs to understand what went wrong?
 
-## Table of Contents
+**Explain Error Plugin** leverages AI to automatically interpret job and pipeline failures—saving you time and helping you fix issues faster.
 
-- [Key Features](#key-features)
-- [Quick Start](#quick-start)
-- [Usage](#usage)
-  - [Pipeline Step](#method-1-pipeline-step)
-  - [Advanced Configuration](#advanced-configuration)
-  - [Manual Console Analysis](#method-2-manual-console-analysis)
-- [Troubleshooting](#troubleshooting)
-- [Best Practices](#best-practices)
-- [Support & Community](#support--community)
-- [License](#license)
-- [Acknowledgments](#acknowledgments)
+Whether it’s a compilation error, test failure, or deployment hiccup, this plugin turns confusing logs into human-readable insights.
 
 ## Key Features
 
-- **AI-Powered Analysis**: Integrates with OpenAI GPT models to analyze error logs intelligently
-- **Pipeline Integration**: Simple `explainError()` step for seamless pipeline integration
-- **One-Click Analysis**: Direct "Explain Error" button on console output pages
-- **Rich Web UI**: View detailed explanations in the Jenkins web interface
-- **Highly Configurable**: Customize API endpoints, models, and analysis parameters
+* 🔍 **One-click error analysis** on any console output
+* ⚙️ **Pipeline-ready** with a simple `explainError()` step
+* 💡 **AI-powered explanations** using OpenAI GPT models
+* 🌐 **Rich web UI** for viewing AI-generated insights
+* 🎯 **Customizable**: set model, API endpoint, log filters, and more
 
 ## Quick Start
 
 ### Prerequisites
 
-- Jenkins 2.479.3 or newer
-- Java 17 or later
-- OpenAI API account
+- Jenkins 2.479.3+
+- Java 17+
+- OpenAI API Key
 
 ### Installation
 
@@ -53,14 +43,14 @@ The Explain Error Plugin transforms cryptic build error logs into clear, actiona
 
 ### Configuration
 
-1. Navigate to `Manage Jenkins` → `Configure System`
+1. Go to `Manage Jenkins` → `Configure System`
 2. Find the **"Explain Error Plugin Configuration"** section
 3. Configure the following settings:
 
 | Setting | Description | Default |
 |---------|-------------|---------|
 | **Enable AI Error Explanation** | Toggle plugin functionality | ✅ Enabled |
-| **API Key** | Your OpenAI API key | *Required* |
+| **API Key** | Your OpenAI API key | *Required*. you can [get one here](https://platform.openai.com/settings) |
 | **API URL** | AI service endpoint | `https://api.openai.com/v1/chat/completions` |
 | **AI Model** | Model to use for analysis | `gpt-3.5-turbo` |
 
@@ -71,11 +61,9 @@ The Explain Error Plugin transforms cryptic build error logs into clear, actiona
 
 ## Usage
 
-There are two ways to use the Explain Error Plugin:
-
 ### Method 1: Pipeline Step
 
-Add the `explainError()` step to your pipeline, typically in the `post` section:
+Use `explainError()` in your pipeline (e.g., in a `post` block):
 
 ```groovy
 pipeline {
@@ -99,97 +87,58 @@ pipeline {
 }
 ```
 
-**Benefits:**
-- ✅ Automatic error analysis on build failures
-- ✅ Results appear in build sidebar
-- ✅ Works with all pipeline types
-
-And see output from side panel if the job failed.
-
-## Advanced Configuration
-
-### Limit Log Lines
-
-To optimize API usage and costs, you can limit the number of log lines analyzed by the `explainError` step. This is particularly useful for large logs where analyzing every line may not be necessary.
+Optional parameters:
 
 ```groovy
-explainError(maxLines: 500)
+explainError(
+  maxLines: 500,
+  logPattern: '(?i)(error|failed|exception)'
+)
 ```
+Output appears in the sidebar of the failed job.
 
-### Log Filtering Patterns
-
-Use regex patterns to focus analysis on specific errors:
-
-```groovy
-// Focus on compilation errors
-explainError(logPattern: '(?i)(error|exception|failed|compilation)')
-
-// Focus on test failures
-explainError(logPattern: '(?i)(test.*failed|assertion.*error)')
-
-// Focus on deployment issues
-explainError(logPattern: '(?i)(deploy|connection|timeout|refused)')
-```
-
-![AI Error Explanation 1](docs/images/side-panel.png)
+![Side Panel - AI Error Explanation](docs/images/side-panel.png)
 
 ### Method 2: Manual Console Analysis
 
-For any build (including non-pipeline jobs), you can manually trigger error analysis:
+Works with Freestyle, Declarative, or any job type.
 
-1. **Navigate** to any build's console output page
-2. **Click** the "Explain Error" button above the console output
-3. **Wait** for the AI to analyze the console output
-4. **View** the explanation that appears below the button
-
-**Benefits:**
-- ✅ Works with any Jenkins job type (Freestyle, Pipeline, etc.)
-- ✅ On-demand analysis
-- ✅ No pipeline modifications required
+1. Go to the failed build’s console output
+2. Click **Explain Error** button in the top
+3. View results directly under the button
 
 ![AI Error Explanation](docs/images/console-output.png)
 
 ## Troubleshooting
 
-### Common Issues
-
 | Issue | Solution |
 |-------|----------|
-| **API key not configured** | Add your OpenAI API key in Jenkins global configuration |
-| **Authentication failed** | Verify your API key is valid and has sufficient credits |
-| **Rate limit exceeded** | Reduce usage frequency or upgrade your OpenAI plan |
-| **Plugin not appearing** | Ensure Jenkins version ≥ 2.479.3 and restart after installation |
+|API key not set	| Add your key in Jenkins global config |
+|Auth or rate limit error| Check key validity, quota, and OpenAI plan |
+|Button not visible	| Ensure Jenkins version ≥ 2.479.3, restart Jenkins after installation |
 
-### Debug Mode
+Enable debug logs:
 
-Enable debug logging in Jenkins:
-1. Go to `Manage Jenkins` → `System Log`
-2. Add logger for `io.jenkins.plugins.explain_error`
-3. Set level to `FINE` or `ALL`
+`Manage Jenkins` → `System Log` → Add logger for `io.jenkins.plugins.explain_error`
 
 ## Best Practices
 
-1. **Use in post sections**: Add `explainError()` in pipeline `post` blocks for automatic analysis
-3. **Monitor API usage**: Keep track of your OpenAI API usage and costs
-4. **Combine with notifications**: Integrate with Slack/email notifications for team awareness
-5. **Regular updates**: Keep the plugin updated for latest features and security fixes
+1. Use `explainError()` in `post { failure { ... } }` blocks
+2. Apply `logPattern` to focus on relevant errors
+3. Monitor your OpenAI usage to control costs
+4. Keep plugin updated regularly
 
 ## Support & Community
 
-### Getting Help
-
-- **Bug Reports**: [GitHub Issues](https://github.com/jenkinsci/explain-error-plugin/issues)
-- **Contributing**: We welcome contributions! Please see our [Contributing Guide](CONTRIBUTING.md)
-- **Security Issues**: Report privately to security@jenkins.io
+- [GitHub Issues](https://github.com/jenkinsci/explain-error-plugin/issues) for bug reports and feature requests
+- [Contributing Guide](CONTRIBUTING.md) if you'd like to help
+- Security concerns? Email security@jenkins.io
 
 ## License
 
-This project is licensed under the [MIT License](LICENSE.md).
+Licensed under the [MIT License](LICENSE.md).
 
 ## Acknowledgments
 
-**Built with ❤️ for the Jenkins community.**
-
-If this plugin has been helpful to you or your team, please consider giving it a ⭐ on GitHub.
-
-Your support helps others find this plugin and encourages us to keep making it better!
+Built with ❤️ for the Jenkins community.
+If you find it useful, please ⭐ us on GitHub!
