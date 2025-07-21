@@ -1,9 +1,6 @@
 /* Explain Error Plugin Styles */
 
 /* Use Jenkins standard button styling but add our identifier */
-.explain-error-btn {
-  margin-right: 5px !important;
-}
 
 /* Container for when we need to create our own button bar */
 .explain-error-container {
