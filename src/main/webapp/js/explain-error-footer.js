@@ -164,8 +164,9 @@ function sendExplainRequest(text, result) {
   })
   .then(response => {
     if (!response.ok) {
-      throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+      notificationBar.show('Explain failed', notificationBar.ERROR);
     }
+    notificationBar.show('Explain succeeded', notificationBar.SUCCESS);
     return response.text();
   })
   .then(responseText => {
