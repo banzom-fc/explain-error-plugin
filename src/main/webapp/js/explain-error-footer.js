@@ -1,6 +1,6 @@
 document.addEventListener('DOMContentLoaded', function () {
   if (
-    window.location.pathname.includes('/console') &&
+    window.location.pathname.match(/\/console(Full)?$/) &&
     !window.location.pathname.includes('/error-explanation')
   ) {
     addExplainErrorButton();
