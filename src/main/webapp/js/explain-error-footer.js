@@ -5,6 +5,15 @@ document.addEventListener('DOMContentLoaded', function () {
   ) {
     addExplainErrorButton();
   }
+  // Moved from the second DOMContentLoaded listener
+  const container = document.getElementById('explain-error-container');
+  const consoleOutput =
+    document.querySelector('#out') ||
+    document.querySelector('pre.console-output') ||
+    document.querySelector('pre');
+  if (container && consoleOutput && consoleOutput.parentNode) {
+    consoleOutput.parentNode.insertBefore(container, consoleOutput);
+  }
 });
 
 function addExplainErrorButton() {
@@ -141,14 +150,3 @@ function hideErrorExplanation() {
   const container = document.getElementById('explain-error-container');
   container.classList.add('jenkins-hidden');
 }
-
-document.addEventListener('DOMContentLoaded', function() {
-  const container = document.getElementById('explain-error-container');
-  const consoleOutput =
-    document.querySelector('#out') ||
-    document.querySelector('pre.console-output') ||
-    document.querySelector('pre');
-  if (container && consoleOutput && consoleOutput.parentNode) {
-    consoleOutput.parentNode.insertBefore(container, consoleOutput);
-  }
-});
