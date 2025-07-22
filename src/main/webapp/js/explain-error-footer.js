@@ -62,19 +62,6 @@ function addExplainErrorButton() {
     container.appendChild(explainBtn);
     consoleOutput.parentNode.insertBefore(container, consoleOutput);
   }
-
-  // Create result container (always separate from buttons)
-  const result = document.createElement('div');
-  result.id = 'explain-error-result';
-  result.className = 'explain-error-result';
-  result.style.display = 'none';
-  
-  // Insert result container before console output
-  if (consoleOutput && consoleOutput.parentNode) {
-    consoleOutput.parentNode.insertBefore(result, consoleOutput);
-  } else {
-    document.body.appendChild(result);
-  }
 }
 
 function createButton(text, className, onClick) {
