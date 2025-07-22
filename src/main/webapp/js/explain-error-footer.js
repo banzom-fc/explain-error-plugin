@@ -82,20 +82,11 @@ function createButton(text, className, onClick) {
 }
 
 function explainConsoleError() {
-  const output =
-    document.querySelector('#out') ||
-    document.querySelector('pre.console-output') ||
-    document.querySelector('pre');
-  if (!output) return;
-
-  const text = output.textContent || output.innerText;
-  if (!text.trim()) return alert('No console output found');
-
   showSpinner();
-  sendExplainRequest(text);
+  sendExplainRequest();
 }
 
-function sendExplainRequest(text) {
+function sendExplainRequest() {
   const basePath = window.location.pathname.replace(/\/console$/, '');
   const url = basePath + '/console-explain-error/explainConsoleError';
 
@@ -103,10 +94,12 @@ function sendExplainRequest(text) {
     "Content-Type": "application/x-www-form-urlencoded",
   });
 
+  // Optionally, you can add maxLines here if you want to support it from the UI
+  // For now, just send an empty body
   fetch(url, {
     method: "POST",
     headers: headers,
-    body: 'errorText=' + encodeURIComponent(text)
+    body: ""
   })
   .then(response => {
     if (!response.ok) {
@@ -124,7 +117,6 @@ function sendExplainRequest(text) {
   })
   .catch(error => {
     showErrorExplanation(`Error: ${error.message}`);
-    
   });
 }
 

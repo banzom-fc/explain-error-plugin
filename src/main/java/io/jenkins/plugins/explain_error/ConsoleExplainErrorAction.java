@@ -45,31 +45,29 @@ public class ConsoleExplainErrorAction implements Action {
      * Called via JavaScript from the console output page.
      */
     @RequirePOST
-    public void doExplainConsoleError(StaplerRequest2 req, StaplerResponse2 rsp) throws ServletException, IOException {        
+    public void doExplainConsoleError(StaplerRequest2 req, StaplerResponse2 rsp) throws ServletException, IOException {
         try {
-            // Check if user has permission to view this build
             run.checkPermission(hudson.model.Item.READ);
 
-            String errorText = req.getParameter("errorText");
-            
-            if (errorText == null || errorText.trim().isEmpty()) {
-                LOGGER.warning("No error text provided in request");
-                writeJsonResponse(rsp, "Error: No error text provided.");
-                return;
+            // Optionally allow maxLines as a parameter, default to 200
+            int maxLines = 200;
+            String maxLinesParam = req.getParameter("maxLines");
+            if (maxLinesParam != null) {
+                try { maxLines = Integer.parseInt(maxLinesParam); } catch (NumberFormatException ignore) {}
             }
 
-            // Use the existing ErrorExplainer service
+            // Fetch the last N lines of the log
+            java.util.List<String> logLines = run.getLog(maxLines);
+            String errorText = String.join("\n", logLines);
+
             ErrorExplainer explainer = new ErrorExplainer();
-            
             String explanation = explainer.explainErrorText(errorText, run);
-                        
+
             if (explanation != null && !explanation.trim().isEmpty()) {
                 writeJsonResponse(rsp, explanation);
             } else {
-                writeJsonResponse(
-                        rsp, "Error: Could not generate explanation. Please check your OpenAI API configuration.");
+                writeJsonResponse(rsp, "Error: Could not generate explanation. Please check your OpenAI API configuration.");
             }
-            
         } catch (Exception e) {
             LOGGER.severe("=== EXPLAIN ERROR REQUEST FAILED ===");
             LOGGER.severe("Error explaining console error: " + e.getMessage());
