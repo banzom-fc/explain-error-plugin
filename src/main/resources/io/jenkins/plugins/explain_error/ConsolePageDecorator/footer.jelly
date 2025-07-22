@@ -1,13 +1,15 @@
 <?jelly escape-by-default='true'?>
 <j:jelly xmlns:j="jelly:core" xmlns:l="/lib/layout">
-    <link rel="stylesheet" type="text/css" href="${rootURL}/plugin/explain-error/css/explain-error.css"/>
-    <script src="${rootURL}/plugin/explain-error/js/explain-error-footer.js" type="text/javascript"/>
-    <div id="explain-error-container" class="jenkins-hidden">
-      <l:card>
-        <div id="explain-error-spinner" class="jenkins-hidden">
-          <l:spinner text="Analyzing error logs..."/>
+    <j:if test="${it.explainErrorEnabled}">
+        <link rel="stylesheet" type="text/css" href="${rootURL}/plugin/explain-error/css/explain-error.css"/>
+        <script src="${rootURL}/plugin/explain-error/js/explain-error-footer.js" type="text/javascript"/>
+        <div id="explain-error-container" class="jenkins-hidden">
+          <l:card>
+            <div id="explain-error-spinner" class="jenkins-hidden">
+              <l:spinner text="Analyzing error logs..."/>
+            </div>
+            <pre id="explain-error-content" class="jenkins-!-margin-bottom-0"></pre>
+          </l:card>
         </div>
-        <pre id="explain-error-content" class="jenkins-!-margin-bottom-0"></pre>
-      </l:card>
-    </div>
+    </j:if>
 </j:jelly>
