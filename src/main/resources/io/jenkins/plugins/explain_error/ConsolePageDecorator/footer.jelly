@@ -7,7 +7,7 @@
         <div id="explain-error-spinner" class="jenkins-hidden">
           <l:spinner text="Analyzing error logs..."/>
         </div>
-        <pre id="explain-error-content"></pre>
+        <pre id="explain-error-content" class="jenkins-!-margin-bottom-0"></pre>
       </l:card>
     </div>
 </j:jelly>
