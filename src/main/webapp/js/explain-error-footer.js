@@ -112,7 +112,6 @@ function sendExplainRequest(text) {
     if (!response.ok) {
       notificationBar.show('Explain failed', notificationBar.ERROR);
     }
-    notificationBar.show('Explain succeeded', notificationBar.SUCCESS);
     return response.text();
   })
   .then(responseText => {
