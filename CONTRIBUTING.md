@@ -105,7 +105,7 @@ We use JUnit 5 and Mockito for testing. Examples:
 class AIServiceTest {
     
     @Mock
-    private ExplainErrorPlugin.GlobalConfigurationImpl config;
+    private GlobalConfigurationImpl config;
     
     @Test
     void shouldExplainError() {
@@ -159,7 +159,7 @@ The plugin follows these patterns:
 
 ```
 src/main/java/io/jenkins/plugins/explain_error/
-├── ExplainErrorPlugin.java          # Main plugin class
+├── GlobalConfigurationImpl.java     # Main plugin class
 ├── ExplainErrorStep.java            # Pipeline step implementation
 ├── AIService.java                   # AI communication service
 ├── ErrorExplainer.java              # Error analysis logic

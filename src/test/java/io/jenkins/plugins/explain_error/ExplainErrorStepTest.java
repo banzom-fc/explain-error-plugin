@@ -54,8 +54,8 @@ class ExplainErrorStepTest {
     @Test
     void testGlobalConfiguration(JenkinsRule jenkins) throws Exception {
         // Test that global configuration can be accessed
-        ExplainErrorPlugin.GlobalConfigurationImpl config =
-                jenkins.getInstance().getDescriptorByType(ExplainErrorPlugin.GlobalConfigurationImpl.class);
+        GlobalConfigurationImpl config =
+                jenkins.getInstance().getDescriptorByType(GlobalConfigurationImpl.class);
 
         // Default values should be set
         assert config.getApiUrl().equals("https://api.openai.com/v1/chat/completions");

@@ -23,9 +23,9 @@ public class AIService {
     private static final Logger LOGGER = Logger.getLogger(AIService.class.getName());
     private static final ObjectMapper MAPPER = new ObjectMapper();
 
-    private final ExplainErrorPlugin.GlobalConfigurationImpl config;
+    private final GlobalConfigurationImpl config;
 
-    public AIService(ExplainErrorPlugin.GlobalConfigurationImpl config) {
+    public AIService(GlobalConfigurationImpl config) {
         this.config = config;
     }
 
