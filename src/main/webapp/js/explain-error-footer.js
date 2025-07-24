@@ -136,8 +136,3 @@ function showSpinner() {
   container.classList.remove('jenkins-hidden');
   spinner.classList.remove('jenkins-hidden');
 }
-
-function hideErrorExplanation() {
-  const container = document.getElementById('explain-error-container');
-  container.classList.add('jenkins-hidden');
-}
