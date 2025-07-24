@@ -34,6 +34,14 @@ public class GlobalConfigurationImpl extends GlobalConfiguration {
         load();
     }
 
+    /**
+     * Get the singleton instance of GlobalConfigurationImpl.
+     * @return the GlobalConfigurationImpl instance
+     */
+    public static GlobalConfigurationImpl get() {
+        return Jenkins.get().getDescriptorByType(GlobalConfigurationImpl.class);
+    }
+
     @Override
     public boolean configure(StaplerRequest2 req, JSONObject json) throws Descriptor.FormException {
         req.bindJSON(this, json);

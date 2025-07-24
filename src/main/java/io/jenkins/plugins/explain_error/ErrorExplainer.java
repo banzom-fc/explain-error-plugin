@@ -6,7 +6,6 @@ import java.io.IOException;
 import java.util.List;
 import java.util.logging.Logger;
 import java.util.regex.Pattern;
-import jenkins.model.Jenkins;
 import org.apache.commons.lang3.StringUtils;
 
 /**
@@ -18,7 +17,7 @@ public class ErrorExplainer {
 
     public void explainError(Run<?, ?> run, TaskListener listener, String logPattern, int maxLines) {
         try {
-            GlobalConfigurationImpl config = getGlobalConfiguration();
+            GlobalConfigurationImpl config = GlobalConfigurationImpl.get();
 
             if (!config.isEnableExplanation()) {
                 listener.getLogger().println("AI error explanation is disabled in global configuration.");
@@ -75,10 +74,6 @@ public class ErrorExplainer {
         return errorLogs.toString();
     }
 
-    private GlobalConfigurationImpl getGlobalConfiguration() {
-        return Jenkins.get().getDescriptorByType(GlobalConfigurationImpl.class);
-    }
-
     /**
      * Explains error text directly without extracting from logs.
      * Used for console output error explanation.
@@ -86,7 +81,7 @@ public class ErrorExplainer {
     public String explainErrorText(String errorText, Run<?, ?> run) {
         
         try {
-            GlobalConfigurationImpl config = getGlobalConfiguration();
+            GlobalConfigurationImpl config = GlobalConfigurationImpl.get();
 
             if (!config.isEnableExplanation()) {
                 LOGGER.warning("AI error explanation is disabled in global configuration");
