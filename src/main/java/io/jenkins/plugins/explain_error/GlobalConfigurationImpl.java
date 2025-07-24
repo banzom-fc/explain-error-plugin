@@ -12,6 +12,7 @@ import org.kohsuke.stapler.DataBoundSetter;
 import org.kohsuke.stapler.QueryParameter;
 import org.kohsuke.stapler.StaplerRequest2;
 import org.kohsuke.stapler.interceptor.RequirePOST;
+import org.jenkinsci.Symbol;
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -21,6 +22,7 @@ import java.util.logging.Logger;
  * Global configuration for the plugin.
  */
 @Extension
+@Symbol("explainError")
 public class GlobalConfigurationImpl extends GlobalConfiguration {
 
     private Secret apiKey;

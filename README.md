@@ -59,6 +59,26 @@ Whether it’s a compilation error, test failure, or deployment hiccup, this plu
 
 ![Configuration](docs/images/configuration.png)
 
+### Configuration as Code (CasC)
+
+This plugin supports [Configuration as Code](https://plugins.jenkins.io/configuration-as-code/) for automated setup. Use the `explainError` symbol in your YAML configuration:
+
+```yaml
+unclassified:
+  explainError:
+    enableExplanation: true
+    apiKey: "${AI_API_KEY}"
+    apiUrl: "https://api.openai.com/v1/chat/completions"
+    model: "gpt-3.5-turbo"
+```
+
+**Environment Variable Example:**
+```bash
+export AI_API_KEY="your-openai-api-key-here"
+```
+
+This allows you to manage the plugin configuration alongside your other Jenkins settings in version control.
+
 ## Usage
 
 ### Method 1: Pipeline Step
