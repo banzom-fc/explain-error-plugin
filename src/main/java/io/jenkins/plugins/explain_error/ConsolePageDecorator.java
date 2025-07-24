@@ -14,7 +14,9 @@ public class ConsolePageDecorator extends PageDecorator {
     }
 
     public boolean isExplainErrorEnabled() {
-        io.jenkins.plugins.explain_error.GlobalConfigurationImpl config = io.jenkins.plugins.explain_error.GlobalConfigurationImpl.get();
-        return config != null && config.isEnableExplanation();
+        GlobalConfigurationImpl config = GlobalConfigurationImpl.get();
+        return config.isEnableExplanation() && 
+               config.getApiKey() != null && 
+               config.getApiUrl() != null && !config.getApiUrl().trim().isEmpty();
     }
 }
