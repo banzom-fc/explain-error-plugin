@@ -15,39 +15,17 @@ class ExplainErrorStepTest {
         // Create a test pipeline job
         WorkflowJob job = jenkins.createProject(WorkflowJob.class, "test-explain-error");
 
-        // Define a pipeline that will fail and then explain the error
-        String pipelineScript = "pipeline {\n" + "    agent any\n"
-                + "    stages {\n"
-                + "        stage('Test') {\n"
-                + "            steps {\n"
-                + "                script {\n"
-                + "                    // This will fail\n"
-                + "                    sh 'nonexistent-command'\n"
-                + "                }\n"
-                + "            }\n"
-                + "        }\n"
-                + "    }\n"
-                + "    post {\n"
-                + "        failure {\n"
-                + "            script {\n"
-                + "                // This would call the AI API in a real scenario\n"
-                + "                // For test, we'll just call the step without API key\n"
-                + "                try {\n"
-                + "                    explainError()\n"
-                + "                } catch (Exception e) {\n"
-                + "                    echo \"Expected failure due to missing API key: ${e.message}\"\n"
-                + "                }\n"
-                + "            }\n"
-                + "        }\n"
-                + "    }\n"
+        // Define a simple pipeline that calls explainError directly
+        String pipelineScript = "node {\n"
+                + "    explainError()\n"
                 + "}";
 
         job.setDefinition(new CpsFlowDefinition(pipelineScript, true));
 
-        // Run the job - it should fail but not crash
-        WorkflowRun run = jenkins.assertBuildStatus(hudson.model.Result.FAILURE, job.scheduleBuild2(0));
+        // Run the job - it should succeed but log the API key error
+        WorkflowRun run = jenkins.assertBuildStatus(hudson.model.Result.SUCCESS, job.scheduleBuild2(0));
 
-        // Check that the explain error step was called
+        // Check that the explain error step was called and logged the expected error
         jenkins.assertLogContains("ERROR: API key is not configured", run);
     }
 
