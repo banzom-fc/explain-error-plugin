@@ -145,7 +145,7 @@ public class ConsoleExplainErrorAction implements Action {
      * @return The response string with cached indicator
      */
     private String createCachedResponse(String explanation) {
-        return explanation + "\n\n[Note: This is a previously generated explanation. Click 'Explain Error' again to generate a new one.]";
+        return explanation + "\n\n[Note: This is a previously generated explanation. Use the 'Generate New' option to create a new one.]";
     }
 
     public Run<?, ?> getRun() {
