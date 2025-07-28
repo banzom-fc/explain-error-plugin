@@ -167,9 +167,7 @@ function sendExplainRequest(forceNew = false) {
   // Add forceNew parameter if needed
   const body = forceNew ? "forceNew=true" : "";
 
-  if (!forceNew) {
-    showSpinner();
-  }
+  showSpinner();
 
   fetch(url, {
     method: "POST",
