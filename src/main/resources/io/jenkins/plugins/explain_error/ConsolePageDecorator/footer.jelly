@@ -20,7 +20,7 @@
               <button type="button" class="jenkins-button jenkins-button--primary jenkins-!-margin-2" onclick="viewExistingExplanation()">
                 View Existing
               </button>
-              <button type="button" class="jenkins-button jenkins-!-margin-2" onclick="generateNewExplanation()">
+              <button type="button" class="jenkins-button" onclick="generateNewExplanation()">
                 Generate New
               </button>
               <button type="button" class="jenkins-button" onclick="cancelExplanation()">
