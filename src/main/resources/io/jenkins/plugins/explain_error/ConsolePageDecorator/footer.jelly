@@ -10,5 +10,24 @@
             <pre id="explain-error-content" class="jenkins-!-margin-bottom-0"></pre>
           </l:card>
         </div>
+        
+        <!-- Confirmation Dialog for existing explanation -->
+        <div id="explain-error-confirm-dialog" class="jenkins-hidden">
+          <l:card title="AI Error Explanation Exists">
+            <p>An AI explanation was already generated on <span id="existing-explanation-timestamp"></span>.</p>
+            <p>Do you want to view the existing explanation or generate a new one?</p>
+            <div class="jenkins-button-bar">
+              <button type="button" class="jenkins-button jenkins-button--primary" onclick="viewExistingExplanation()">
+                View Existing
+              </button>
+              <button type="button" class="jenkins-button" onclick="generateNewExplanation()">
+                Generate New
+              </button>
+              <button type="button" class="jenkins-button" onclick="cancelExplanation()">
+                Cancel
+              </button>
+            </div>
+          </l:card>
+        </div>
     </j:if>
 </j:jelly>

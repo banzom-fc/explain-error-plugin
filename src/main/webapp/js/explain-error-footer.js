@@ -14,6 +14,12 @@ document.addEventListener('DOMContentLoaded', function () {
   if (container && consoleOutput && consoleOutput.parentNode) {
     consoleOutput.parentNode.insertBefore(container, consoleOutput);
   }
+  
+  // Add the confirmation dialog to the page
+  const dialogContainer = document.getElementById('explain-error-confirm-dialog');
+  if (dialogContainer && consoleOutput && consoleOutput.parentNode) {
+    consoleOutput.parentNode.insertBefore(dialogContainer, consoleOutput);
+  }
 });
 
 function addExplainErrorButton() {
@@ -82,11 +88,75 @@ function createButton(text, className, onClick) {
 }
 
 function explainConsoleError() {
-  showSpinner();
-  sendExplainRequest();
+  // First, check if an explanation already exists
+  checkExistingExplanation();
 }
 
-function sendExplainRequest() {
+function checkExistingExplanation() {
+  const basePath = window.location.pathname.replace(/\/console$/, '');
+  const url = basePath + '/console-explain-error/checkExistingExplanation';
+
+  const headers = crumb.wrap({
+    "Content-Type": "application/x-www-form-urlencoded",
+  });
+
+  fetch(url, {
+    method: "POST",
+    headers: headers,
+    body: ""
+  })
+  .then(response => response.json())
+  .then(data => {
+    if (data.hasExplanation) {
+      // Show confirmation dialog
+      showConfirmationDialog(data.timestamp);
+    } else {
+      // No existing explanation, proceed with new request
+      sendExplainRequest(false);
+    }
+  })
+  .catch(error => {
+    console.warn('Error checking existing explanation:', error);
+    // If check fails, proceed with new request
+    sendExplainRequest(false);
+  });
+}
+
+function showConfirmationDialog(timestamp) {
+  const dialog = document.getElementById('explain-error-confirm-dialog');
+  const timestampSpan = document.getElementById('existing-explanation-timestamp');
+  
+  if (timestampSpan) {
+    timestampSpan.textContent = timestamp;
+  }
+  
+  dialog.classList.remove('jenkins-hidden');
+  
+  // Hide other elements
+  hideContainer();
+}
+
+function viewExistingExplanation() {
+  hideConfirmationDialog();
+  sendExplainRequest(false); // This will return the cached result
+}
+
+function generateNewExplanation() {
+  hideConfirmationDialog();
+  showSpinner();
+  sendExplainRequest(true); // Force new explanation
+}
+
+function cancelExplanation() {
+  hideConfirmationDialog();
+}
+
+function hideConfirmationDialog() {
+  const dialog = document.getElementById('explain-error-confirm-dialog');
+  dialog.classList.add('jenkins-hidden');
+}
+
+function sendExplainRequest(forceNew = false) {
   const basePath = window.location.pathname.replace(/\/console$/, '');
   const url = basePath + '/console-explain-error/explainConsoleError';
 
@@ -94,12 +164,17 @@ function sendExplainRequest() {
     "Content-Type": "application/x-www-form-urlencoded",
   });
 
-  // Optionally, you can add maxLines here if you want to support it from the UI
-  // For now, just send an empty body
+  // Add forceNew parameter if needed
+  const body = forceNew ? "forceNew=true" : "";
+
+  if (!forceNew) {
+    showSpinner();
+  }
+
   fetch(url, {
     method: "POST",
     headers: headers,
-    body: ""
+    body: body
   })
   .then(response => {
     if (!response.ok) {
@@ -135,4 +210,9 @@ function showSpinner() {
   const spinner = document.getElementById('explain-error-spinner');
   container.classList.remove('jenkins-hidden');
   spinner.classList.remove('jenkins-hidden');
+}
+
+function hideContainer() {
+  const container = document.getElementById('explain-error-container');
+  container.classList.add('jenkins-hidden');
 }
