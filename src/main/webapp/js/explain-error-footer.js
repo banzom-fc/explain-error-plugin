@@ -143,7 +143,6 @@ function viewExistingExplanation() {
 
 function generateNewExplanation() {
   hideConfirmationDialog();
-  showSpinner();
   sendExplainRequest(true); // Force new explanation
 }
 
