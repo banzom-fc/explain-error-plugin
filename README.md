@@ -41,7 +41,7 @@ Whether it’s a compilation error, test failure, or deployment hiccup, this plu
    - Click `Install` and restart Jenkins
 
 2. **Manual Installation:**
-   - Download the `.hpi` file from [releases](https://github.com/jenkinsci/explain-error-plugin/releases)
+   - Download the `.hpi` file from [releases](https://plugins.jenkins.io/explain-error/releases/)
    - Upload via `Manage Jenkins` → `Manage Plugins` → `Advanced`
 
 ### Configuration
