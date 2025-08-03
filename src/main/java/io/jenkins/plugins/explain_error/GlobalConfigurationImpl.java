@@ -1,9 +1,9 @@
 package io.jenkins.plugins.explain_error;
 
 import hudson.Extension;
-import hudson.Plugin;
 import hudson.model.Descriptor;
 import hudson.util.FormValidation;
+import hudson.util.ListBoxModel;
 import hudson.util.Secret;
 import jenkins.model.GlobalConfiguration;
 import jenkins.model.Jenkins;
@@ -26,8 +26,9 @@ import java.util.logging.Logger;
 public class GlobalConfigurationImpl extends GlobalConfiguration {
 
     private Secret apiKey;
-    private String apiUrl = "https://api.openai.com/v1/chat/completions";
-    private String model = "gpt-3.5-turbo";
+    private AIProvider provider = AIProvider.OPENAI;
+    private String apiUrl;
+    private String model;
     private boolean enableExplanation = true;
 
     public GlobalConfigurationImpl() {
@@ -44,9 +45,40 @@ public class GlobalConfigurationImpl extends GlobalConfiguration {
 
     @Override
     public boolean configure(StaplerRequest2 req, JSONObject json) throws Descriptor.FormException {
-        req.bindJSON(this, json);
-        save();
-        return true;
+        try {
+            // Validate required fields before binding
+            if (json.has("enableExplanation")) {
+                this.enableExplanation = json.getBoolean("enableExplanation");
+            }
+            
+            if (json.has("provider")) {
+                String providerStr = json.getString("provider");
+                try {
+                    this.provider = AIProvider.valueOf(providerStr);
+                } catch (IllegalArgumentException e) {
+                    throw new Descriptor.FormException("Invalid provider: " + providerStr, "provider");
+                }
+            }
+            
+            if (json.has("apiKey")) {
+                String apiKeyStr = json.getString("apiKey");
+                this.apiKey = Secret.fromString(apiKeyStr);
+            }
+            
+            if (json.has("apiUrl")) {
+                this.apiUrl = json.getString("apiUrl");
+            }
+            
+            if (json.has("model")) {
+                this.model = json.getString("model");
+            }
+            
+            save();
+            return true;
+        } catch (Exception e) {
+            Logger.getLogger(GlobalConfigurationImpl.class.getName()).log(Level.SEVERE, "Configuration failed", e);
+            throw new Descriptor.FormException("Configuration failed: " + e.getMessage(), e, "");
+        }
     }
 
     // Getters and setters
@@ -59,7 +91,23 @@ public class GlobalConfigurationImpl extends GlobalConfiguration {
         this.apiKey = apiKey;
     }
 
+    public AIProvider getProvider() {
+        return provider != null ? provider : AIProvider.OPENAI;
+    }
+
+    @DataBoundSetter
+    public void setProvider(AIProvider provider) {
+        this.provider = provider;
+    }
+
     public String getApiUrl() {
+        return apiUrl;
+    }
+
+    /**
+     * Get the raw configured API URL without defaults, used for validation.
+     */
+    public String getRawApiUrl() {
         return apiUrl;
     }
 
@@ -69,6 +117,13 @@ public class GlobalConfigurationImpl extends GlobalConfiguration {
     }
 
     public String getModel() {
+        return model;
+    }
+
+    /**
+     * Get the raw configured model without defaults, used for validation.
+     */
+    public String getRawModel() {
         return model;
     }
 
@@ -92,23 +147,63 @@ public class GlobalConfigurationImpl extends GlobalConfiguration {
     }
 
     /**
+     * Get all available AI providers for the dropdown.
+     */
+    public AIProvider[] getProviderValues() {
+        return AIProvider.values();
+    }
+
+    /**
+     * Populate the provider dropdown items for the UI.
+     */
+    @RequirePOST
+    public ListBoxModel doFillProviderItems() {
+        Jenkins.get().checkPermission(Jenkins.ADMINISTER);
+
+        ListBoxModel model = new ListBoxModel();
+        AIProvider currentProvider = getProvider(); // Get the current provider
+
+        for (AIProvider p : AIProvider.values()) {
+            model.add(new ListBoxModel.Option(
+                p.getDisplayName(),          // display name
+                p.name(),                    // actual value
+                p == currentProvider         // is selected
+            ));
+        }
+
+        return model;
+}
+
+    /**
      * Method to test the AI API configuration.
      * This is called when the "Test Configuration" button is clicked.
      */
     @RequirePOST
     public FormValidation doTestConfiguration(@QueryParameter("apiKey") String apiKey,
+                                                @QueryParameter("provider") String provider,
                                                 @QueryParameter("apiUrl") String apiUrl,
                                                 @QueryParameter("model") String model) {
         Jenkins.get().checkPermission(Jenkins.ADMINISTER);
 
         // Validate only the provided parameters
         Secret testApiKeySecret = (apiKey != null) ? Secret.fromString(apiKey) : null;
+        AIProvider testProvider = null;
+        if (provider != null && !provider.isEmpty()) {
+            try {
+                testProvider = AIProvider.valueOf(provider);
+            } catch (IllegalArgumentException e) {
+                return FormValidation.error("Invalid provider: " + provider);
+            }
+        }
         String testApiUrl = apiUrl != null ? apiUrl : "";
         String testModel = model != null ? model : "";
 
         try {
             GlobalConfigurationImpl tempConfig = new GlobalConfigurationImpl();
             tempConfig.setApiKey(testApiKeySecret);
+            if (testProvider != null) {
+                tempConfig.setProvider(testProvider);
+            }
             tempConfig.setApiUrl(testApiUrl);
             tempConfig.setModel(testModel);
 

@@ -20,9 +20,10 @@ class AIServiceTest {
         // Get the global configuration instance
         config = GlobalConfigurationImpl.get();
         
-        // Set test values
-        config.setApiUrl("https://api.openai.com/v1/chat/completions");
-        config.setModel("gpt-3.5-turbo");
+        // Set minimal test values (no auto-population)
+        config.setProvider(AIProvider.OPENAI);
+        config.setApiUrl(null); // No auto-population
+        config.setModel(null); // No auto-population
         config.setApiKey(Secret.fromString("test-api-key"));
         config.setEnableExplanation(true);
         
@@ -194,5 +195,53 @@ class AIServiceTest {
         // Should handle JSON-like content without breaking
         assertNotEquals("No error logs provided for explanation.", result);
         assertNotNull(result);
+    }
+
+    @Test
+    void testGeminiProviderConfiguration() {
+        config.setProvider(AIProvider.GEMINI);
+        config.setApiKey(Secret.fromString("test-gemini-key"));
+        
+        AIService geminiService = new AIService(config);
+        String result = assertDoesNotThrow(() -> geminiService.explainError("Test error"));
+        
+        // Should create Gemini service successfully
+        assertNotNull(result);
+        assertFalse(result.trim().isEmpty());
+        assertNotEquals("No error logs provided for explanation.", result);
+    }
+
+    @Test
+    void testProviderDefaults() {
+        // Test OpenAI - no auto-population
+        config.setProvider(AIProvider.OPENAI);
+        assertNull(config.getApiUrl()); // No auto-population
+        assertNull(config.getModel()); // No auto-population
+        
+        // Test Gemini - no auto-population
+        config.setProvider(AIProvider.GEMINI);
+        config.setApiUrl(null); // Clear URL
+        config.setModel(null);  // Clear model
+        
+        assertNull(config.getApiUrl()); // No auto-population
+        assertNull(config.getModel()); // No auto-population
+    }
+
+    @Test
+    void testProviderSwitching() {
+        // Start with OpenAI
+        config.setProvider(AIProvider.OPENAI);
+        AIService openaiService = new AIService(config);
+        
+        // Switch to Gemini
+        config.setProvider(AIProvider.GEMINI);
+        AIService geminiService = new AIService(config);
+        
+        // Both should work (though will fail due to no network, but should not crash)
+        String openaiResult = assertDoesNotThrow(() -> openaiService.explainError("Test error"));
+        String geminiResult = assertDoesNotThrow(() -> geminiService.explainError("Test error"));
+        
+        assertNotNull(openaiResult);
+        assertNotNull(geminiResult);
     }
 }
