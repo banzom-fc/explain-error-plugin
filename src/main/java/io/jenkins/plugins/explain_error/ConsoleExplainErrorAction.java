@@ -81,7 +81,7 @@ public class ConsoleExplainErrorAction implements Action {
                 
                 writeJsonResponse(rsp, explanation);
             } else {
-                writeJsonResponse(rsp, "Error: Could not generate explanation. Please check your OpenAI API configuration.");
+                writeJsonResponse(rsp, "Error: Could not generate explanation. Please check your AI API configuration.");
             }
         } catch (Exception e) {
             LOGGER.severe("=== EXPLAIN ERROR REQUEST FAILED ===");

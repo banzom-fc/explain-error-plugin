@@ -5,7 +5,15 @@
 [![GitHub Release](https://img.shields.io/github/release/jenkinsci/explain-error-plugin.svg?label=changelog)](https://github.com/jenkinsci/explain-error-plugin/releases/latest)
 [![Jenkins Plugin Installs](https://img.shields.io/jenkins/plugin/i/explain-error.svg?color=blue)](https://plugins.jenkins.io/explain-error/)
 
+<img src="docs/images/logo-small.png" width="230" alt="Explain Error Plugin Logo">
+
 AI-powered Jenkins plugin that explains pipeline and job failures with human-readable insights.
+
+## 🎥 Demo
+
+👉 [Watch the hands-on demo on YouTube](https://youtu.be/rPI9PMeDQ2o?si=YMeprtSz9VmqglCL) — setup, run, and see how AI explains your Jenkins job failures.
+
+---
 
 ## Overview
 
@@ -19,9 +27,9 @@ Whether it’s a compilation error, test failure, or deployment hiccup, this plu
 
 * 🔍 **One-click error analysis** on any console output
 * ⚙️ **Pipeline-ready** with a simple `explainError()` step
-* 💡 **AI-powered explanations** using OpenAI GPT models
+* 💡 **AI-powered explanations** using OpenAI GPT models or Google Gemini
 * 🌐 **Rich web UI** for viewing AI-generated insights
-* 🎯 **Customizable**: set model, API endpoint, log filters, and more
+* 🎯 **Customizable**: set provider, model, API endpoint, log filters, and more
 
 ## Quick Start
 
@@ -29,7 +37,7 @@ Whether it’s a compilation error, test failure, or deployment hiccup, this plu
 
 - Jenkins 2.479.3+
 - Java 17+
-- OpenAI API Key
+- AI API Key (OpenAI or Google)
 
 ### Installation
 
@@ -39,7 +47,7 @@ Whether it’s a compilation error, test failure, or deployment hiccup, this plu
    - Click `Install` and restart Jenkins
 
 2. **Manual Installation:**
-   - Download the `.hpi` file from [releases](https://github.com/jenkinsci/explain-error-plugin/releases)
+   - Download the `.hpi` file from [releases](https://plugins.jenkins.io/explain-error/releases/)
    - Upload via `Manage Jenkins` → `Manage Plugins` → `Advanced`
 
 ### Configuration
@@ -51,9 +59,10 @@ Whether it’s a compilation error, test failure, or deployment hiccup, this plu
 | Setting | Description | Default |
 |---------|-------------|---------|
 | **Enable AI Error Explanation** | Toggle plugin functionality | ✅ Enabled |
-| **API Key** | Your OpenAI API key | *Required*. you can [get one here](https://platform.openai.com/settings) |
-| **API URL** | AI service endpoint | `https://api.openai.com/v1/chat/completions` |
-| **AI Model** | Model to use for analysis | `gpt-3.5-turbo` |
+| **AI Provider** | Choose between OpenAI or Google Gemini | `OpenAI` |
+| **API Key** | Your AI provider API key | *Required*. Get from [OpenAI](https://platform.openai.com/settings) or [Google AI Studio](https://aistudio.google.com/app/apikey) |
+| **API URL** | AI service endpoint | Auto-populated based on provider selection |
+| **AI Model** | Model to use for analysis | Auto-populated based on provider selection |
 
 4. Click **"Test Configuration"** to verify your setup
 5. Save the configuration
@@ -64,21 +73,48 @@ Whether it’s a compilation error, test failure, or deployment hiccup, this plu
 
 This plugin supports [Configuration as Code](https://plugins.jenkins.io/configuration-as-code/) for automated setup. Use the `explainError` symbol in your YAML configuration:
 
+**OpenAI Configuration:**
 ```yaml
 unclassified:
   explainError:
     enableExplanation: true
+    provider: "OPENAI"
     apiKey: "${AI_API_KEY}"
     apiUrl: "https://api.openai.com/v1/chat/completions"
     model: "gpt-3.5-turbo"
 ```
 
+**Google Gemini Configuration:**
+```yaml
+unclassified:
+  explainError:
+    enableExplanation: true
+    provider: "GEMINI"
+    apiKey: "${AI_API_KEY}"
+    apiUrl: "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent"
+    model: "gemini-1.5-flash"
+```
+
 **Environment Variable Example:**
 ```bash
-export AI_API_KEY="your-openai-api-key-here"
+export AI_API_KEY="your-api-key-here"
 ```
 
 This allows you to manage the plugin configuration alongside your other Jenkins settings in version control.
+
+## Supported AI Providers
+
+### OpenAI
+- **Models**: `gpt-3.5-turbo`, `gpt-4`, `gpt-4-turbo`
+- **API Key**: Get from [OpenAI Platform](https://platform.openai.com/settings)
+- **Endpoint**: `https://api.openai.com/v1/chat/completions`
+- **Best for**: Comprehensive error analysis with excellent reasoning
+
+### Google Gemini
+- **Models**: `gemini-1.5-flash`, `gemini-1.5-pro`
+- **API Key**: Get from [Google AI Studio](https://aistudio.google.com/app/apikey)
+- **Endpoint**: `https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent`
+- **Best for**: Fast, efficient analysis with competitive quality
 
 ## Usage
 
@@ -135,7 +171,7 @@ Works with Freestyle, Declarative, or any job type.
 | Issue | Solution |
 |-------|----------|
 |API key not set	| Add your key in Jenkins global config |
-|Auth or rate limit error| Check key validity, quota, and OpenAI plan |
+|Auth or rate limit error| Check key validity, quota, and provider plan |
 |Button not visible	| Ensure Jenkins version ≥ 2.479.3, restart Jenkins after installation |
 
 Enable debug logs:
@@ -146,7 +182,7 @@ Enable debug logs:
 
 1. Use `explainError()` in `post { failure { ... } }` blocks
 2. Apply `logPattern` to focus on relevant errors
-3. Monitor your OpenAI usage to control costs
+3. Monitor your AI provider usage to control costs
 4. Keep plugin updated regularly
 
 ## Support & Community

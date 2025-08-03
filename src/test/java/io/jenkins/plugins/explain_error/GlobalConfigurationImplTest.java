@@ -18,10 +18,11 @@ class GlobalConfigurationImplTest {
     void setUp(JenkinsRule jenkins) {
         config = GlobalConfigurationImpl.get();
         
-        // Reset to default values for each test
+        // Reset to clean state for each test (no auto-population)
         config.setApiKey(null);
-        config.setApiUrl("https://api.openai.com/v1/chat/completions");
-        config.setModel("gpt-3.5-turbo");
+        config.setProvider(AIProvider.OPENAI);
+        config.setApiUrl(null);
+        config.setModel(null);
         config.setEnableExplanation(true);
     }
 
@@ -37,8 +38,8 @@ class GlobalConfigurationImplTest {
 
     @Test
     void testDefaultValues() {
-        assertEquals("https://api.openai.com/v1/chat/completions", config.getApiUrl());
-        assertEquals("gpt-3.5-turbo", config.getModel());
+        assertNull(config.getApiUrl()); // No auto-population, should be null initially
+        assertNull(config.getModel()); // No auto-population, should be null initially
         assertTrue(config.isEnableExplanation());
         assertNull(config.getApiKey()); // API key should be null by default in tests
     }
@@ -79,7 +80,7 @@ class GlobalConfigurationImplTest {
     @Test
     void testDoTestConfiguration() {
         // Test the doTestConfiguration method with invalid parameters
-        FormValidation result = config.doTestConfiguration("invalid-key", "invalid-url", "invalid-model");
+        FormValidation result = config.doTestConfiguration("invalid-key", "OPENAI", "invalid-url", "invalid-model");
         
         // The result should not be null and should have a message
         assertNotNull(result);
@@ -93,7 +94,7 @@ class GlobalConfigurationImplTest {
     @Test
     void testDoTestConfigurationWithNullParameters() {
         // Test with null parameters
-        FormValidation result = config.doTestConfiguration(null, null, null);
+        FormValidation result = config.doTestConfiguration(null, null, null, null);
         
         // Should handle null parameters gracefully
         assertNotNull(result);
@@ -103,7 +104,7 @@ class GlobalConfigurationImplTest {
     @Test
     void testDoTestConfigurationWithEmptyParameters() {
         // Test with empty parameters
-        FormValidation result = config.doTestConfiguration("", "", "");
+        FormValidation result = config.doTestConfiguration("", "", "", "");
         
         // Should handle empty parameters gracefully
         assertNotNull(result);
@@ -126,24 +127,36 @@ class GlobalConfigurationImplTest {
     @Test
     void testSetApiUrlWithNullValue() {
         config.setApiUrl(null);
+        // Raw URL should be null
+        assertNull(config.getRawApiUrl());
+        // API URL should return null when null (no auto-population)
         assertNull(config.getApiUrl());
     }
 
     @Test
     void testSetApiUrlWithEmptyString() {
         config.setApiUrl("");
+        // Raw URL should be empty
+        assertEquals("", config.getRawApiUrl());
+        // API URL should return empty string when empty (no auto-population)
         assertEquals("", config.getApiUrl());
     }
 
     @Test
     void testSetModelWithNullValue() {
         config.setModel(null);
+        // Raw model should be null
+        assertNull(config.getRawModel());
+        // Model should return null when null (no auto-population)
         assertNull(config.getModel());
     }
 
     @Test
     void testSetModelWithEmptyString() {
         config.setModel("");
+        // Raw model should be empty
+        assertEquals("", config.getRawModel());
+        // Model should return empty string when empty (no auto-population)
         assertEquals("", config.getModel());
     }
 
@@ -151,6 +164,7 @@ class GlobalConfigurationImplTest {
     void testConfigurationPersistence() {
         // Set some values
         config.setApiKey(Secret.fromString("test-key"));
+        config.setProvider(AIProvider.GEMINI);
         config.setApiUrl("https://test.example.com");
         config.setModel("test-model");
         config.setEnableExplanation(false);
@@ -160,9 +174,36 @@ class GlobalConfigurationImplTest {
         
         // Verify the values are still there
         assertEquals("test-key", config.getApiKey().getPlainText());
+        assertEquals(AIProvider.GEMINI, config.getProvider());
         assertEquals("https://test.example.com", config.getApiUrl());
         assertEquals("test-model", config.getModel());
         assertFalse(config.isEnableExplanation());
+    }
+
+    @Test
+    void testProviderSetterAndGetter() {
+        // Test setting different providers
+        config.setProvider(AIProvider.GEMINI);
+        assertEquals(AIProvider.GEMINI, config.getProvider());
+        
+        config.setProvider(AIProvider.OPENAI);
+        assertEquals(AIProvider.OPENAI, config.getProvider());
+        
+        // Test null provider defaults to OpenAI
+        config.setProvider(null);
+        assertEquals(AIProvider.OPENAI, config.getProvider());
+    }
+
+    @Test
+    void testProviderPersistence() {
+        // Test that provider setting persists after save/load
+        config.setProvider(AIProvider.GEMINI);
+        config.save();
+        assertEquals(AIProvider.GEMINI, config.getProvider());
+        
+        // Simulate reload
+        config.load();
+        assertEquals(AIProvider.GEMINI, config.getProvider());
     }
 
     @Test
