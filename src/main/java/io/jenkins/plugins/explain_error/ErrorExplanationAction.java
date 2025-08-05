@@ -67,4 +67,12 @@ public class ErrorExplanationAction implements RunAction2 {
     public Run<?, ?> getRun() {
         return run;
     }
+
+    /**
+     * Check if this action has a valid explanation.
+     * @return true if explanation is not null, not empty, and not just whitespace
+     */
+    public boolean hasValidExplanation() {
+        return explanation != null && !explanation.trim().isEmpty();
+    }
 }
