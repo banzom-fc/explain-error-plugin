@@ -143,7 +143,7 @@ public class GlobalConfigurationImpl extends GlobalConfiguration {
 
     @Override
     public String getDisplayName() {
-        return "Explain Error Plugin Configuration";
+        return "AI Explain Error Plugin Configuration";
     }
 
     /**

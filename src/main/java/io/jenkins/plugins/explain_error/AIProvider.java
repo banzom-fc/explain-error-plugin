@@ -5,7 +5,7 @@ package io.jenkins.plugins.explain_error;
  */
 public enum AIProvider {
     OPENAI("OpenAI", "https://api.openai.com/v1/chat/completions", "gpt-3.5-turbo"),
-    GEMINI("Google Gemini", "https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent", "gemini-1.5-flash");
+    GEMINI("Google Gemini", "https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent", "gemini-2.5-flash-lite");
 
     private final String displayName;
     private final String defaultApiUrl;
