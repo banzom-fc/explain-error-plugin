@@ -143,4 +143,31 @@ class ErrorExplanationActionTest {
         assertTrue(actionTimestamp >= beforeCreation);
         assertTrue(actionTimestamp <= afterCreation);
     }
+
+    @Test
+    void testHasValidExplanation() {
+        // Test with valid explanation
+        ErrorExplanationAction validAction = new ErrorExplanationAction("Valid explanation", "Error logs");
+        assertTrue(validAction.hasValidExplanation());
+        
+        // Test with null explanation
+        ErrorExplanationAction nullAction = new ErrorExplanationAction(null, "Error logs");
+        assertFalse(nullAction.hasValidExplanation());
+        
+        // Test with empty explanation
+        ErrorExplanationAction emptyAction = new ErrorExplanationAction("", "Error logs");
+        assertFalse(emptyAction.hasValidExplanation());
+        
+        // Test with whitespace-only explanation
+        ErrorExplanationAction whitespaceAction = new ErrorExplanationAction("   \n  \t  ", "Error logs");
+        assertFalse(whitespaceAction.hasValidExplanation());
+        
+        // Test with explanation containing only spaces
+        ErrorExplanationAction spacesAction = new ErrorExplanationAction("     ", "Error logs");
+        assertFalse(spacesAction.hasValidExplanation());
+        
+        // Test with valid explanation containing whitespace
+        ErrorExplanationAction validWithWhitespaceAction = new ErrorExplanationAction("  Valid explanation  ", "Error logs");
+        assertTrue(validWithWhitespaceAction.hasValidExplanation());
+    }
 }
